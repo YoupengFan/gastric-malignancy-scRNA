@@ -1,5 +1,36 @@
 # 05_Iterative_Classify — 迭代 K-means 恶性/非恶性分类（函数2）
 
+## 实验设计（先读）
+
+本节在 44,011 个上皮谱系细胞（Epithelial + Chief，论文口径）上运行迭代
+K-means 分类：种子基因 AddModuleScore → K-means k=2 → pseudobulk 配对
+Wilcoxon 更新签名，循环至标签一致率 ≥ 90%（算法细节见根 README §5）。
+全部实验按「两个种子 × 若干运行配置」组织：
+
+| 种子 | 来源 | Runs | 角色 |
+|------|------|------|------|
+| 主种子 | Toil tcga_RSEM_gene_tpm，33 配对，plain limma（04 主产物） | run1–run6（星形设计） | 忠实复现 + 数据集构成敏感性 |
+| 测试种子 | TCGA HiSeqV2 早期误用种子，limma-voom（04 data/testseed/） | run1、run6 | 检验种子集对结果的引导作用 |
+
+**主种子 6 Runs（星形设计）**：run1 = 复现锚（与主流程输出逐位一致），
+run2–run6 各只变一个条件、其余同 run1：
+
+| run | 唯一变动 |
+|-----|------|
+| run1 | 无（= 主流程配置，复现锚） |
+| run2 | 上皮口径宽：4 类型（加入 Parietal/Enteroendocrine） |
+| run3 | 基因选择：expression 排序替代 logFC |
+| run4 | 额外排除 12 管家基因（HK 黑名单） |
+| run5 | 上皮口径窄：仅 Epi |
+| run6 | 剔除低置信注释细胞 |
+
+**测试种子 2 Runs**：只跑与论文数据定义符合的 run1（Epi+Chief, logFC）
+与 run6（低置信排除）配置；其余 run 因数据源与细胞类型条件与论文差异大，
+不具说明力。测试种子检验 **bulk 种子集对结果的引导作用**；数据集构成
+敏感性由主种子六 Runs 承担。
+
+结果分述：「主流程结果」→「六 Runs 敏感性矩阵」→「测试种子对照」。
+
 ## 主流程结果（忠实口径 = Epithelial + Chief，与论文一致）
 
 | 指标 | 值 |
