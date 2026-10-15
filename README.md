@@ -1,45 +1,66 @@
 # Issue #26 — 迭代恶性细胞分类：数据处理概览
 
-目录
+## 目录
 
+1. [背景与结论速览](#1-背景与结论速览)
+2. [框架 · 我们的分析系统设计](#2-框架--我们的分析系统设计)
+3. [数据 · 为什么是 GSE150290 而不是 HRA000051](#3-数据--为什么是-gse150290-而不是-hra000051)
+4. [结果 — 跑道 A：从原始数据到上皮细胞](#4-结果--跑道-a从原始数据到上皮细胞)
+5. [结果 — 跑道 B：TCGA-STAD 种子基因集](#5-结果--跑道-btcga-stad-种子基因集)
+6. [结果 — 汇合：迭代恶性细胞分类](#6-结果--汇合迭代恶性细胞分类)
+7. [评价：一个"自洽但无锚"的算法](#7-评价一个自洽但无锚的算法)
 
-
+---
 
 > **参考论文**: Zhang M et al. Dissecting transcriptional heterogeneity in primary gastric adenocarcinoma by single cell RNA sequencing. *Gut* 2021;70:464–475. DOI: [10.1136/gutjnl-2019-320368](https://doi.org/10.1136/gutjnl-2019-320368)
-> **论文 method：**(/00_Doc/zhang2021_paper/supply_material/gutjnl-2019-320368supp001.pdf)
+> **论文 method**：[supp001.pdf](00_Doc/zhang2021_paper/supply_material/gutjnl-2019-320368supp001.pdf)
+
+---
+
+## 1. 背景与结论速览
+
+<!-- Claude 起草底稿（2026-10-15），待你审改 -->
+
+- 本文档是 issue #26（复现 Zhang et al. 2021 迭代 K-means 恶性细胞分类方法）的答复，同时作为本仓库的根 README。
+- **复现对象**：论文方法 = TCGA-STAD bulk DEG 种子基因 → AddModuleScore → K-means k=2 → pseudobulk DEG → 迭代至收敛 → 输出"恶性 / 非恶性"标签。
+- **数据**：论文原始数据 HRA000051 受控、不可获取（§3.1），改用公开数据 GSE150290（§3.2）——47 例癌症内镜活检 + 5 例非癌对照，共 52 个 10x 样本。
+- 我们交付两件事：① 一条可复现的 R 管线（§2–§6）；② 对该方法的一份评价（§7）。
+- **结论速览**：方法机械上自洽——所有配置与双种子下均稳定收敛（3–4 轮，一致性 91–96%）；但其输出的"恶性"标签没有生物学锚定，收敛轴是肠化生轴而非恶性轴，且迭代参照池被肿瘤细胞结构性污染。详见 §7。
+
 ---
 
 ## 2. 框架 · 我们的分析系统设计
 
-基于原论文的方法学框架，我们设计了一个 **双跑道、单汇合** 的分析系统（详见项目 [README.md](../README.md)）：
+基于原论文的方法学框架，我们设计了一个 **双跑道、单汇合** 的分析系统（各步细节见对应目录下的 README.md）：
 
 ```
 ══════════════════════════════════════════════════════════
 跑道 A: scRNA-seq 预处理 → 上皮细胞鉴定
 ══════════════════════════════════════════════════════════
 
-  01_Data/ ──→ 02_Preprocessing/ ──→ 07_Clustering_Annotation/
-  GSE150290      QC → 归一化          Marker gene scoring
-  52 样本           → Harmony 校正      → 9 种细胞类型
-  136K cells        → UMAP + Leiden    → 33,934 Epithelial cells
+  01_Data/ ──→ 01_QC/ ──→ 02_Normalize_Batch/ ──→ 03_Cluster_Annotate/
+  GSE150290     QC 过滤        log1p(CP10K) + CC/MT    Leiden 聚类 + 12 类注释
+  52 样本       160,359 cells   回归 + Harmony          150,490 cells
+  38.4M barcodes → Scrublet     → 02 输出 159,308        → 上皮谱系 44,011
+                剔除 1,051
 
 ══════════════════════════════════════════════════════════
 跑道 B: Bulk DEG → 种子基因集
 ══════════════════════════════════════════════════════════
 
-  03_Bulk_DEG/
-  TCGA-STAD (415 tumor + 35 normal; paired DEG on 32 matched pairs)
-  → edgeR + DESeq2 + limma-voom (三方法 Venn consensus)
+  04_Bulk_DEG/
+  TCGA-STAD Toil RSEM tpm（33 配对）
+  → log2(TPM+1) + plain limma → 论文 Table S1 复现（top50 重叠 94/100）
   → Top 50 Tumor-up + Top 50 Normal-up
 
 ══════════════════════════════════════════════════════════
 汇合: 迭代恶性细胞分类
 ══════════════════════════════════════════════════════════
 
-  08_Iterative_Classification/
-  上皮细胞 (33,934) + 种子基因 (50+50)
-  → AddModuleScore → K-means (k=2) → Pseudobulk DEG
-  → 迭代至收敛 (≥95%) → 最终恶性/非恶性标签
+  05_Iterative_Classify/
+  上皮谱系细胞 (44,011) + 种子基因 (50+50)
+  → AddModuleScore → K-means (k=2) → Pseudobulk 配对 Wilcoxon
+  → 迭代至收敛 (≥90%) → 最终恶性/非恶性标签
 ══════════════════════════════════════════════════════════
 ```
 
@@ -51,11 +72,11 @@
 
 Zhang 2021 的原始 scRNA-seq 数据存放于 **GSA-Human**（国家基因组科学数据中心），accession **HRA000051**。尽管论文声明"data are available on reasonable request"，实际访问需要经过 **Data Access Committee (DAC) 审核**。
 
-![HRA000051 GSA-Human 页面截图 — 显示受控访问](/00_Doc/zhang2021_paper/屏幕截图%202026-06-27%20193343.png)
+![HRA000051 GSA-Human 页面截图 — 显示受控访问](00_Doc/zhang2021_paper/屏幕截图%202026-06-27%20193343.png)
 
 *图 3.1a: HRA000051 在 GSA-Human 数据库的访问页面。数据标注为"Controlled Access"，需要向 DAC (Omics_Data) 提交申请方可下载。*
 
-![NGDC 账户注册/申请受阻截图](/00_Doc/zhang2021_paper/屏幕截图%202026-06-27%20193611.png)
+![NGDC 账户注册/申请受阻截图](00_Doc/zhang2021_paper/屏幕截图%202026-06-27%20193611.png)
 
 *图 3.1b: 数据访问申请界面。NGDC 注册要求机构邮箱及身份验证，学生身份无法独立完成 DAC 审核流程。*
 
@@ -70,7 +91,7 @@ GSE150290 包含 **52 个 10x Genomics 样本**（GEO 页面概述为 "47 biopsi
 
 > 📎 数据来源：[GSE150290 — NCBI GEO](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE150290)（Status: Public on Jan 30, 2022，无需注册即可访问元数据及下载 count matrix。）
 
-选择 GSE150290 的优势是多重的：(1) 公开可获取，确保完全可复现；(2) 47 例癌症活检 vs 12 样本，统计功效显著增强；(3) 韩国独立队列为 Zhang 2021 方法提供了跨人群、跨机构的外部验证——这是原论文未曾进行的检验；
+选择 GSE150290 的优势是多重的：(1) 公开可获取，确保完全可复现；(2) 47 例癌症活检 vs 论文的 12 样本，统计功效显著增强；(3) 韩国独立队列为 Zhang 2021 方法提供了跨人群、跨机构的外部验证——这是原论文未曾进行的检验；
 
 ---
 
@@ -78,12 +99,12 @@ GSE150290 包含 **52 个 10x Genomics 样本**（GEO 页面概述为 "47 biopsi
 
 ### 4.1 Qc
 
-**QC 阈值：** UMI：1,000 ~ 15,000 ; gene ≥ 500 ; MT ≤ 50%。
+**QC 阈值：** UMI ∈ [1,001, 15,000]；genes ≥ 501；MT ≤ 50%。
 
-> 论文UMI上限为6000，在此数据集上截断大量细胞，因此选择更宽松的15,000  
+> 下界逐字沿用论文；上界从论文的 6,000 放宽至 15,000（P99.97，数据驱动）——6,000 天花板在此数据集上无自然悬崖、系统性截断大细胞。看家基因过滤省略：论文的 curated list 未随文公开，无法忠实复现。
 > **关于线粒体 50% 阈值**：胃上皮细胞代谢活动活跃，胃上皮组织中可能含有大量的线粒体。因此论文采用了更宽松的 50% 标准。
 
-![QC metrics overview](/01_QC/figures/qc_metrics_overview.png)
+![QC metrics overview](01_QC/figures/qc_metrics_overview.png)
 
 **Figure 1**  质控变量的分布图 (GSE150290).
 **(A)** total UMI counts 直方图.
@@ -92,57 +113,60 @@ GSE150290 包含 **52 个 10x Genomics 样本**（GEO 页面概述为 "47 biopsi
 **(D)** 基因数量与 UMI 总计数之间的关系，随机抽取 50,000 个的barcode；图中颜色代表线粒体基因占比（MT%）。
 
 
-Data: GSE150290, 52 gastric cancer samples (10X Genomics). After filtering (min_genes = 500, min_counts = 1,000, max_counts = 6,000, MT% < 50%), **136,352 high-quality cells** retained.
+Data: GSE150290, 52 gastric cancer samples (10X Genomics). After filtering (1,001 ≤ UMI ≤ 15,000, genes ≥ 501, MT% ≤ 50%), **160,359 high-quality cells** retained; 1,051 heterotypic doublets removed by Scrublet → **159,308 cells** 进入下游。
 
 ### 4.2 归一化(CP10K + log1p)
 
-![](/02_Normalize_Batch/figures/library_and_cells_overview.png)
+![](02_Normalize_Batch/figures/library_and_cells_overview.png)
 **Figure 2. library and cell的分布图.**  上图为libraries直方图，下图为cells直方图
 
 ### 4.3 批次校正：Harmony PCA
 
-多样本 scRNA-seq 数据整合中，技术批次效应会混淆生物学信号。我们使用 **Harmony** (v2.0.5) 在 PCA 空间进行迭代校正，以 `sample_id` 为批次变量。Harmony 在 17 次迭代后收敛，校正后 sample-level R² 从 0.153 降至 0.125（降低 18.3%）。
+多样本 scRNA-seq 数据整合中，技术批次效应会混淆生物学信号。我们使用 **Harmony** (v2.0.5) 在 PCA 空间进行迭代校正，以 `sample_id` 为批次变量（52 个 10x run）。校正后 **mean η²(sample)（PC1-30）从 0.1014 降至 0.0345**；FNN k=20 同样本邻居比例从 0.283 降至 0.098（随机期望 1/52 ≈ 0.019）。
 
 CC 评分 → HVG 3000（黑名单后精选）→回归 S/G2M/pct_mt（残差，不缩放）→ 残差方差重排 top 2000 → z-score（clip 10）→ PCA 50 → Harmony（key=sample；theta=2,
 sigma=0.1, nclust=100）
 
 
-![UMAP before and after Harmony](/02_Normalize_Batch/figures/pc_validation.png)
+![PC validation](02_Normalize_Batch/figures/pc_validation.png)
 **Figure 3.1 Batch effect correction validation.** **(A)** 每细胞相邻细胞 k=20 是属于同样本的比例（post后降低），虚线为随机线**(B)** PC 1-30 样本相关性，矫正后降低
 
-![UMAP before and after Harmony](/02_Normalize_Batch/figures/umap_batch_before_after.png)
+![UMAP before and after Harmony](02_Normalize_Batch/figures/umap_batch_before_after.png)
 **Figure 3.2 批次矫正 UMAP validation.** 抽取patient01、17、21 的 adjacent cancer侧 上皮类型细胞做示意图
 
 
 
-Data: GSE150290, 52 gastric cancer samples (10X Genomics). 136,352 cells after QC filtering. Harmony: R package v2.0.5 (Korsunsky et al., 2019 *Nature Methods*).
+Data: GSE150290, 52 gastric cancer samples (10X Genomics). 159,308 cells after QC filtering. Harmony: R package v2.0.5 (Korsunsky et al., 2019 *Nature Methods*).
 
 ### 4.4 聚类与细胞类型注释
 
-使用 Harmony 校正后的前 50 PCs， Leiden 聚类（分辨率 r=0.5）。
+使用 Harmony 校正后的前 50 PCs， Leiden 聚类（分辨率 r=0.5，20 clusters），剔除红细胞（583）与死细胞簇（8,235，簇中位 MT% > 25）后得到 **150,490 cells / 12 类型**。
 
 
-我们采用原论文的 marker gene scoring 策略——对 9 种经典细胞类型，使用 canonical marker genes 计算每个 cluster 的平均表达得分，取 `argmax` 分配细胞类型（详见 [](../07_Clustering_Annotation/README.md)）。
+我们采用 Kim 2022 + Zhang 2021 双来源 marker 的 12 类注释面板（Hybrid v2）——AddModuleScore（25 bins × 100 同 bin 对照扣除）打分后逐细胞 z-score，取 `argmax` 投票分配细胞类型（详见 [03_Cluster_Annotate/README.md](03_Cluster_Annotate/README.md)）。
 
-![Cell type annotation](/03_Cluster_Annotate/figures/qc_umap_clean_nolabel.png)
+![Cell type annotation](03_Cluster_Annotate/figures/umap_annotation.png)
 
 
 
-*图 4.7: 细胞类型注释结果。9 种细胞类型在 UMAP 上呈清晰分区。*
+*图 4.7: 细胞类型注释结果。12 种细胞类型在 UMAP 上呈清晰分区。*
 
 | 细胞类型 | 细胞数 | 比例 |
 |:---|:---:|:---:|
-| Plasma cells | 38,144 | 28.0% |
-| **Epithelial cells** | **33,934** | **24.9%** |
-| T cells | 20,033 | 14.7% |
-| B cells | 19,720 | 14.5% |
-| Fibroblasts | 7,460 | 5.5% |
-| NK cells | 6,074 | 4.5% |
-| Myeloid | 4,952 | 3.6% |
-| Endothelial cells | 3,477 | 2.6% |
-| Mast cells | 2,558 | 1.9% |
+| Plasma cells | 39,326 | 26.1% |
+| Epithelial cells | 24,946 | 16.6% |
+| T cells | 24,721 | 16.4% |
+| Chief cells | 19,065 | 12.7% |
+| B cells | 17,925 | 11.9% |
+| Fibroblasts | 7,999 | 5.3% |
+| Myeloid | 3,848 | 2.6% |
+| Endothelial cells | 3,706 | 2.5% |
+| Mast cells | 3,152 | 2.1% |
+| Enteroendocrine | 2,933 | 1.9% |
+| Parietal cells | 1,455 | 1.0% |
+| NK cells | 1,414 | 0.9% |
 
-**33,934 个上皮细胞**（EPCAM⁺, KRT8⁺, KRT18⁺）被提取，作为迭代分类的输入。这一数量与原论文的 10,411 个上皮细胞在数量级上相当，但来自更多样、更多样的样本群。
+**44,011 个上皮谱系细胞**（Epithelial 24,946 + Chief 19,065）被提取，作为迭代分类的输入——约为原论文 10,411 个上皮细胞的 4.2 倍。低置信注释（z-delta < 0.5）共 15,940 细胞（10.6%），其中剔除后的运行见 §7.3。
 
 ---
 
@@ -150,17 +174,19 @@ Data: GSE150290, 52 gastric cancer samples (10X Genomics). 136,352 cells after Q
 
 ### 5.1 数据与方法
 
-从 UCSC Xena 下载 **TCGA-STAD** bulk RNA-seq 数据（HiSeqV2, RSEM normalized）。表达矩阵包含 **415 例肿瘤**和 **35 例正常**样本。取其中 **32 对**配对的肿瘤-正常样本进行差异表达分析（仅患者同时有 tumor 和 normal 样本入组），
+**主种子**：从 UCSC Xena Toil hub 下载 TCGA-STAD `tcga_RSEM_gene_tpm`（与论文同数据源，详见 [04_Bulk_DEG/README.md](04_Bulk_DEG/README.md)），STAD 子集 **33 对**配对肿瘤-正常样本；log2(TPM+1) 变换 + TPM>1 in ≥20% 低表达过滤（约 15,800 基因）+ plain limma 配对设计（TPM 非计数 → 无 voom）；adj.p < 0.01（无 FC 截断），每方向按 |logFC| 取前 50。与论文 Table S1 逐位核验：CST1 5.781 / PGA3 −3.965 逐位一致，top50 重叠 94/100。
 
-![](/04_Bulk_DEG/figures/fig_bulk_deg.png)
+另设一套**测试种子**（Xena HiSeqV2 + limma-voom，32 对配对）作结构敏感性对照（见 §7.3）。早期搭建期误将 HiSeqV2 矩阵当作论文数据源，对照 Table S1 与论文 method 后修正为主线 Toil；HiSeqV2 种子保留为测试种子而非丢弃。
+
+![](04_Bulk_DEG/figures/fig_bulk_deg.png)
 **种子基因代表性成员**：
 
 | 方向 | 代表基因 | 功能 |
 |:---|:---|:---|
-| Tumor-up (50) | CST1, HOXC10, CLDN3, CLDN4, KRT7, S100A2, REG4, TFF3, MUC13... | 增殖、紧密连接、肠型粘蛋白、癌胚抗原 |
-| Normal-up (50) | S100G, ATP4A, ATP4B, PGC, LIPF, GKN1, GKN2, MUC5AC, TFF1, TFF2... | 胃酸分泌、消化酶、胃黏液保护 |
+| Tumor-up (50) | CST1, CLDN3, KRT7, APOC1, TNFRSF6B, MSLN, CLDN4, UBE2C, UBD, GDF15, MISP, MMP7... | 增殖、紧密连接、肠型上皮 |
+| Normal-up (50) | PGA3, PGA4, GKN1, DES, PGA5, MAL, C2orf40, GKN2, MYH11, ACTG2, DPT, ATP4B... | 胃酸分泌、消化酶、胃黏液保护、平滑肌（癌旁正常含肌层） |
 
-⚠️ 注意：种子基因来自 bulk 组织 DEG，包含非上皮来源的基因（如免疫细胞和基质细胞的差异表达）。这正是原论文需要迭代步骤的原因——bulk 种子中混杂的非上皮信号将在 sc-level 迭代中被逐步过滤。
+⚠️ 注意：种子基因来自 bulk 组织 DEG，包含非上皮来源的信号（如癌旁正常中的平滑肌基因 DES/MYH11/ACTG2，以及免疫细胞差异）。这正是原论文需要迭代步骤的原因——bulk 种子中混杂的非上皮信号将在 sc-level 迭代中被逐步过滤。
 
 ---
 
@@ -168,35 +194,32 @@ Data: GSE150290, 52 gastric cancer samples (10X Genomics). 136,352 cells after Q
 
 ### 6.1 算法实现
 
-我们在 R 中完整实现了迭代分类框架（[`08_Iterative_Classification/scripts/step2_iterative_classify.R`](../08_Iterative_Classification/scripts/step2_iterative_classify.R)，~1,226 行），核心循环为：
+我们在 R 中完整实现了迭代分类框架（[`step2_iterative_classify.R`](05_Iterative_Classify/scripts/step2_iterative_classify.R)），核心循环为：
 
 ```
-种子基因 (50 Tumor-up + 50 Normal-up)
+种子基因 (50 Tumor-up + 50 Normal-up，Table S1 复现)
        │
        ▼
-  AddModuleScore (25 bins, 100 ctrl per gene)
+  AddModuleScore (25 bins, 100 ctrl per gene, 44,011 上皮谱系细胞)
        │
        ▼
-  2D scores × 33,934 epithelial cells
+  2D scores × 44,011 cells
        │
        ▼
-  K-means (k=2, nstart=25) ─→ "推定恶性" / "推定非恶性"
+  K-means (k=2, nstart=25, seed 42) ─→ "推定恶性" / "推定非恶性"
        │
        ▼
-  Pseudobulk 聚合 (patient × condition)
+  Pseudobulk 聚合 (patient × label) → 配对 Wilcoxon
        │
        ▼
-     limma(paired design ~ patient + condition)
+  每方向按显著性取前 50 → 重新打分
        │
        ▼
-  CC 保护: 97 基因黑名单 + Spearman |ρ| > 0.25 过滤
-       │
-       ▼
-  重新打分 → 检查收敛 (标签一致性 ≥ 95%)
+  检查收敛 (标签一致性 ≥ 90%)
        │         │
        │    ┌────┘
        │    ▼
-       │  未收敛: 继续迭代
+       │  未收敛: 继续迭代 (上限 10 轮)
        │
        ▼
      收敛: 输出最终标签 + 基因签名
@@ -204,33 +227,36 @@ Data: GSE150290, 52 gastric cancer samples (10X Genomics). 136,352 cells after Q
 
 ### 6.2 收敛轨迹
 
-迭代在 **4 轮后收敛于 98.0% 一致性**：
+迭代在 **4 轮后收敛于 91.0% 一致性**（阈值 ≥ 90%）：
 
-| 轮次 | 恶性细胞 | 非恶性 | mal_score (恶性组) | mal_score (非恶性组) | 一致性 | 收敛 |
-|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| 0 (种子) | 8,298 (24.5%) | 25,636 | 0.125 | 0.001 | — | ❌ |
-| 1 | 22,602 (66.6%) | 11,332 | 0.074 | −0.114 | 55.6% | ❌ |
-| 2 | 3,764 (11.1%) | 30,170 | 1.699 | −0.202 | 44.4% | ❌ |
-| 3 | **3,480 (10.3%)** | **30,454** | **2.564** | −0.282 | **98.0%** | ✅ |
+| 轮次 | 恶性细胞 | 非恶性 | 一致性 | 收敛 |
+|:---:|:---:|:---:|:---:|:---:|
+| 1 (种子切分) | 16,347 (37.1%) | 27,664 | — | ❌ |
+| 2 | 13,115 (29.8%) | 30,896 | 85.2% | ❌ |
+| 3 | 20,281 (46.1%) | 23,730 | 82.9% | ❌ |
+| 4 | **22,207 (50.5%)** | **21,804** | **91.0%** | ✅ |
 
-![Convergence trajectory](../08_Iterative_Classification/figures/convergence_trajectory.png)
+![Convergence trajectory](05_Iterative_Classify/figures/fig_convergence.png)
 
-*图 6.1: 收敛轨迹。左：恶性评分在两组间的分化（信号放大 20.5×，从 0.125 → 2.564）；中：恶性细胞比例变化（Iter 1 的 66.6% 为种子基因噪音所致的过度膨胀）；右：标签一致性（Iter 3 达到 98.0% 收敛）。*
+*图 6.1: 收敛轨迹。标签一致性第 2–3 轮回落（85.2% → 82.9%），第 4 轮升至 91.0% 越过阈值收敛。最终 22,207 细胞被判"恶性"（50.5%）。*
 
 
 ### 6.3 最终 DEG 结果
 
-最终 pseudobulk 三方法 DEG 鉴定出 **50 个恶性基因**和 **50 个非恶性基因**（adj.p < 0.01, 三方法 consensus ≥ 2/3）。
+最终 pseudobulk 配对 Wilcoxon 鉴定出 **50 个恶性基因**和 **50 个非恶性基因**（每方向按显著性取前 50）：
 
-![Volcano plot: Final DEG](../08_Iterative_Classification/figures/volcano_deg_final.png)
+| 方向 | Top 基因（前 10） |
+|:---|:---|
+| 恶性 (50) | TFF1, S100A6, PHGR1, ACTB, TMSB4X, GKN1, KRT19, KRT8, APOA1, TMSB10 |
+| 非恶性 (50) | PGC, LIPF, LYZ, IGJ, REG3A, IGLL5, REG1A, LTF, RP11-1143G9.4, MUC6 |
 
-*图 6.2: 最终迭代 DEG 火山图。x 轴为 log₂ fold change (malignant vs non-malignant)，y 轴为 −log₁₀(adjusted p-value)。红色点：恶性方向 (Top 50)；蓝色点：非恶性方向 (Top 50)。关键基因标注。所有 Top 50 基因均通过 CC 保护过滤（0 个细胞周期基因混入）。*
+恶性方向以胃表面/粘蛋白与肠化生程序为主（TFF1、GKN1、APOA1）；非恶性方向以胃消化酶为主（PGC、LIPF、LYZ），但**混有浆细胞/免疫相关基因（IGJ、IGLL5，深处还有 CD74、HLA-DRA、MZB1）**——最终签名并非纯上皮身份对比。
 
-### 6.4 基因签名热图
+### 6.4 K-means 切分图
 
-![Gene heatmap: Top 30](../08_Iterative_Classification/figures/gene_heatmap_top30.png)
+![K-means split](05_Iterative_Classify/figures/fig_scores_kmeans.png)
 
-*图 6.3: Top 30 恶性 + Top 30 非恶性基因在 33,934 个上皮细胞中的表达热图。细胞按恶性评分排序，左侧为非恶性，右侧为恶性。恶性基因（红色条）在右侧高表达；非恶性基因（蓝色条）在左侧高表达。基因签名纯净度极高——无一免疫标记 (CD8A, CD19, CD163)，无一基质标记 (COL1A1, ACTA2)，全部为上皮/肠化生特异性基因。*
+*图 6.2: 最终一轮 k=2 切分——模块分数空间（恶性评分 vs 非恶性评分），颜色为最终标签。*
 
 ---
 
