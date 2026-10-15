@@ -1,0 +1,11 @@
+{
+  "raw_barcodes_total": 38338560,
+  "n_scatter": 50000,
+  "thresholds": {
+    "1,001 UMI": 230481,
+    "6,000 UMI": 32417,
+    "15,000 UMI": 6183
+  },
+  "bins": 300,
+  "decimation_step": 191
+}

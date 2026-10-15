@@ -1,0 +1,20 @@
+{
+  "step": "04_Bulk_DEG",
+  "function_name": "step1_bulk_deg",
+  "method": "limma, paired ~ patient + condition, input log2(TPM+1) (paper: 'DEGs ... using the limma package')",
+  "data": "tcga_RSEM_gene_tpm.gz (Xena Toil hub, log2(TPM+0.001)), STAD subset = Toil columns with STAD patient prefix",
+  "design": "~ patient + condition (paired), ref = Normal",
+  "thresholds": {
+    "n_top": 50,
+    "padj": 0.01
+  },
+  "low_expr_filter": "TPM>1 in >=20% paired samples",
+  "output": {
+    "n_sig": 7445,
+    "n_up": 6547,
+    "n_down": 898,
+    "n_patients": 33,
+    "n_genes_in": 31439,
+    "n_genes_filtered": 15547
+  }
+}

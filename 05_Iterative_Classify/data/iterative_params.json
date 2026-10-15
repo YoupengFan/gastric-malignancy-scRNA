@@ -1,0 +1,17 @@
+{
+  "step": "05_Iterative_Classify",
+  "function_name": "step2_iterative_classify",
+  "method": "AddModuleScore (25 bins x 100 ctrl) -> K-means k=2 (nstart=25) -> pseudobulk paired Wilcoxon DEG -> iterate",
+  "seed": 42,
+  "convergence": 0.9,
+  "max_iter": 10,
+  "n_top": 50,
+  "epithelial_definition": ["Epithelial", "Chief"],
+  "seed_source": "04_Bulk_DEG top50_*_limma.txt (limma only)",
+  "output": {
+    "n_epi_cells": 44011,
+    "n_malignant": 22207,
+    "pct_malignant": 50.5,
+    "n_iterations": 4
+  }
+}

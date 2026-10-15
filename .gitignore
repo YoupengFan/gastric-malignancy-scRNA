@@ -1,0 +1,10 @@
+# 大文件外部数据（本地留作重跑验证，不上传；来源见 01_Data/README.md）
+01_Data/raw/
+01_Data/tcga_RSEM_gene_tpm.gz
+01_Data/TCGA.STAD.sampleMap_HiSeqV2.gz
+
+# 巨型中间产物（全链重跑可再生；05 输入改用 03 的极简上皮子集
+# gse150290_epi_counts.rds，见 export_epi_counts.R）
+01_QC/data/gse150290_qc_matrix.rds
+02_Normalize_Batch/data/gse150290_norm_harmony.rds
+03_Cluster_Annotate/data/gse150290_annotated.rds

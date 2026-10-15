@@ -1,0 +1,24 @@
+{
+  "step": "01_QC",
+  "pipeline": "R replication of Zhang 2021 Gut (issue #26)",
+  "thresholds": {
+    "min_umis": 1001,
+    "max_umis": 15000,
+    "min_genes": 501,
+    "pct_mt_max": 50,
+    "housekeeping_filter": "OMITTED: paper's curated list not published",
+    "paper_comparison": "Zhang 2021: 1001-6000 UMIs / >=501 genes / MT<50% / housekeeping mean<2"
+  },
+  "output": {
+    "total_cells": 160359,
+    "total_genes": 32738,
+    "total_raw_barcodes": 38338560,
+    "n_samples": 52
+  },
+  "summary_stats": {
+    "median_genes_per_cell": 854.5,
+    "median_counts_per_cell": 2553,
+    "median_pct_mt": 4.56,
+    "cells_per_sample_range": "1354-6814"
+  }
+}

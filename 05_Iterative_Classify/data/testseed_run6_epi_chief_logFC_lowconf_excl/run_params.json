@@ -1,0 +1,17 @@
+{
+  "run": "run6",
+  "epithelial_definition": ["Epithelial", "Chief"],
+  "gene_selection": "logFC",
+  "hk_blacklist": false,
+  "hygiene": "MT-/MTRNR/RPL/RPS/MRPL/MRPS/MALAT1/globin (always on)",
+  "seeds": "./04_Bulk_DEG/data/testseed",
+  "seed": 42,
+  "convergence": 0.9,
+  "max_iter": 10,
+  "n_top": 50,
+  "n_epi_cells": 37798,
+  "n_malignant": 21721,
+  "low_conf_excluded": true,
+  "pct_malignant": 57.5,
+  "n_iterations": 4
+}

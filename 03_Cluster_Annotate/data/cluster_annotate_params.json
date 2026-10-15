@@ -1,0 +1,37 @@
+{
+  "step": "03_Cluster_Annotate",
+  "clustering": {
+    "algorithm": "Leiden (igraph, R)",
+    "resolution": 0.5,
+    "n_neighbors": 15,
+    "n_pcs": 50,
+    "reduction": "harmony",
+    "random_seed": 42,
+    "note": "cluster IDs are Leiden-resolution-specific; annotation is marker-driven"
+  },
+  "annotation": {
+    "method": "per-cell z-score across 12 marker means -> argmax vote (final annotation)",
+    "marker_source": "Immune panels = Zhang 2021 (Kim paper lists immune cell type names only, no marker genes); Stromal = Zhang 2021 base + Kim 2022 additions (Fibroblasts += MMP2/PDGFRA/MYL9; Endothelial += PLVAP/KDR/PTPRB); Gastric epithelial = Kim 2022 genes (Enteroendocrine CHGA/GAST/PROX1; Chief PGC) + Parietal GIF/ATP4B/ATP4A (no literature source, data-discovered: per-cluster DEG of Cls 15 misvoted Fibroblasts at 6.3% purity under Zhang 9-type annotation; Kim has no parietal type) + generic gastric mucosa markers (Epithelial panel, LIPF/PGA3/PGA4, GHRL/SST/PCSK1N). Adapted to hg19 ref: T += CD7/LCK/IL32/CCL5 (TRAC/TRBC1 absent from hg19 ref); Plasma = MZB1+SDC1 only (IGHG1/IGKC absent from hg19 ref; JCHAIN present as alias IGJ but 85% detected = ambient RNA; TNFRSF17/DERL3/FKBP11 too global); Fibroblasts -= FAP (dead); Endothelial -= PECAM1 (absent from hg19 ref)",
+    "cd3d_rescue": "NK-panel vote + CD3D detected -> T_cells (T-lineage rescue)",
+    "cluster_mode": "reference column only (cluster_annotation + purity)",
+    "low_confidence_z_delta": 0.5
+  },
+  "exclusion": {
+    "rbc": {
+      "globin_genes": ["HBA1", "HBA2", "HBB"],
+      "globin_frac_max": 0.05,
+      "note": "applied BEFORE clustering (cluster IDs self-consistent); post-RBC per-cluster globin diagnostics in log (section 6b)"
+    },
+    "dead_clusters": {
+      "median_mt_gt": 25,
+      "max_median_z_lt": 1.5,
+      "clusters": "7"
+    },
+    "scrublet": "applied upstream in 02 (per-sample, threshold 0.25)"
+  },
+  "output": {
+    "n_cells_after": 150490,
+    "n_clusters": 20,
+    "n_excluded": 8235
+  }
+}

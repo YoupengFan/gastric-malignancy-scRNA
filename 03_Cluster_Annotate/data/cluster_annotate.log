@@ -1,0 +1,419 @@
+[01:41:41] Loading /mnt/e/gastric-msda-upload/10_R_pipeline/02_Normalize_Batch/data ...
+[01:43:58]   160359 cells x 32738 genes [136s]
+[01:43:58] FindNeighbors (harmony, dims=1:50, k=15) + Leiden (r=0.5) ...
+[01:46:54] Loading /mnt/e/gastric-msda-upload/10_R_pipeline/02_Normalize_Batch/data ...
+[01:48:12]   160359 cells x 32738 genes [78s]
+[01:48:12] FindNeighbors (harmony, dims=1:50, k=15) + Leiden (r=0.5) ...
+[01:49:54]   23 clusters [102s]
+[01:49:54] RunUMAP (harmony) ...
+[01:52:11]   UMAP done [137s]
+[01:52:11] Computing 12-type marker scores (mean expression) ...
+[01:52:13]   T_cells         : 3/5 markers found (missing: TRAC,TRBC1)
+[01:52:15]   Plasma_cells    : 2/5 markers found (missing: JCHAIN,IGHG1,IGKC)
+[01:52:16]   Endothelial     : 7/8 markers found (missing: PECAM1)
+[01:52:18]   Scores done [7s]
+[01:52:18] Annotating: per-cell z-score -> cluster mode ...
+[01:52:53] Loading /mnt/e/gastric-msda-upload/10_R_pipeline/02_Normalize_Batch/data ...
+[01:53:57]   160359 cells x 32738 genes [65s]
+[01:53:57] FindNeighbors (harmony, dims=1:50, k=15) + Leiden (r=0.5) ...
+[01:55:36]   23 clusters [99s]
+[01:55:36] RunUMAP (harmony) ...
+[01:57:50]   UMAP done [134s]
+[01:57:50] Computing 12-type marker scores (mean expression) ...
+[01:57:52]   T_cells         : 3/5 markers found (missing: TRAC,TRBC1)
+[01:57:54]   Plasma_cells    : 2/5 markers found (missing: JCHAIN,IGHG1,IGKC)
+[01:57:55]   Endothelial     : 7/8 markers found (missing: PECAM1)
+[01:57:57]   Scores done [7s]
+[01:57:57] Annotating: per-cell z-score -> cluster mode ...
+[01:58:02]   Cluster annotation (mode vote) + purity:
+[01:58:02]     Cls 1   -> Plasma_cells     purity 0.952
+[01:58:02]     Cls 10  -> Enteroendocrine  purity 0.527
+[01:58:02]     Cls 11  -> Plasma_cells     purity 0.948
+[01:58:02]     Cls 12  -> Fibroblasts      purity 0.857
+[01:58:02]     Cls 13  -> Fibroblasts      purity 0.900
+[01:58:02]     Cls 14  -> Endothelial      purity 0.776
+[01:58:02]     Cls 15  -> B_cells          purity 0.727
+[01:58:02]     Cls 16  -> Mast_cells       purity 0.985
+[01:58:02]     Cls 17  -> Plasma_cells     purity 0.927
+[01:58:02]     Cls 18  -> Parietal         purity 0.859
+[01:58:02]     Cls 19  -> Epithelial       purity 0.928
+[01:58:02]     Cls 2   -> Epithelial       purity 0.586
+[01:58:02]     Cls 20  -> T_cells          purity 0.624
+[01:58:02]     Cls 21  -> Plasma_cells     purity 0.448
+[01:58:02]     Cls 22  -> Plasma_cells     purity 0.880
+[01:58:02]     Cls 23  -> Plasma_cells     purity 0.890
+[01:58:02]     Cls 3   -> B_cells          purity 0.825
+[01:58:02]     Cls 4   -> T_cells          purity 0.900
+[01:58:02]     Cls 5   -> T_cells          purity 0.720
+[01:58:02]     Cls 6   -> Chief            purity 0.986
+[01:58:02]     Cls 7   -> Epithelial       purity 0.977
+[01:58:02]     Cls 8   -> Epithelial       purity 0.537
+[01:58:02]     Cls 9   -> Myeloid          purity 0.572
+[01:58:02]   Per-cell low-confidence (z-delta < 0.5): 13888 (8.7%) [5s]
+[01:58:05]   RBC candidates (globin frac > 0.05): 590 (0.37%)
+[01:58:05]   Dead-cell clusters (median MT%>25 & max median z<1): none
+[01:58:05]   Total excluded: 590 (0.37%) [3s]
+[01:58:21]   Remaining: 159769 cells in 23 clusters
+[01:58:21] Saving figures ...
+[02:00:03] Loading /mnt/e/gastric-msda-upload/10_R_pipeline/02_Normalize_Batch/data ...
+[02:01:20]   160359 cells x 32738 genes [77s]
+[02:01:20] FindNeighbors (harmony, dims=1:50, k=15) + Leiden (r=0.5) ...
+[02:03:00]   23 clusters [101s]
+[02:03:00] RunUMAP (harmony) ...
+[02:05:16]   UMAP done [135s]
+[02:05:16] Computing 12-type marker scores (mean expression) ...
+[02:05:18]   T_cells         : 3/5 markers found (missing: TRAC,TRBC1)
+[02:05:19]   Plasma_cells    : 2/5 markers found (missing: JCHAIN,IGHG1,IGKC)
+[02:05:20]   Endothelial     : 7/8 markers found (missing: PECAM1)
+[02:05:22]   Scores done [6s]
+[02:05:22] Annotating: per-cell z-score -> cluster mode ...
+[02:05:27]   Cluster annotation (mode vote) + purity:
+[02:05:27]     Cls 1   -> Plasma_cells     purity 0.952
+[02:05:27]     Cls 10  -> Enteroendocrine  purity 0.527
+[02:05:27]     Cls 11  -> Plasma_cells     purity 0.948
+[02:05:27]     Cls 12  -> Fibroblasts      purity 0.857
+[02:05:27]     Cls 13  -> Fibroblasts      purity 0.900
+[02:05:27]     Cls 14  -> Endothelial      purity 0.776
+[02:05:27]     Cls 15  -> B_cells          purity 0.727
+[02:05:27]     Cls 16  -> Mast_cells       purity 0.985
+[02:05:27]     Cls 17  -> Plasma_cells     purity 0.927
+[02:05:27]     Cls 18  -> Parietal         purity 0.859
+[02:05:27]     Cls 19  -> Epithelial       purity 0.928
+[02:05:27]     Cls 2   -> Epithelial       purity 0.586
+[02:05:27]     Cls 20  -> T_cells          purity 0.624
+[02:05:27]     Cls 21  -> Plasma_cells     purity 0.448
+[02:05:27]     Cls 22  -> Plasma_cells     purity 0.880
+[02:05:27]     Cls 23  -> Plasma_cells     purity 0.890
+[02:05:27]     Cls 3   -> B_cells          purity 0.825
+[02:05:27]     Cls 4   -> T_cells          purity 0.900
+[02:05:27]     Cls 5   -> T_cells          purity 0.720
+[02:05:27]     Cls 6   -> Chief            purity 0.986
+[02:05:27]     Cls 7   -> Epithelial       purity 0.977
+[02:05:27]     Cls 8   -> Epithelial       purity 0.537
+[02:05:27]     Cls 9   -> Myeloid          purity 0.572
+[02:05:27]   Per-cell low-confidence (z-delta < 0.5): 13888 (8.7%) [5s]
+[02:05:30]   RBC candidates (globin frac > 0.05): 590 (0.37%)
+[02:05:30]   Dead-cell clusters (median MT%>25 & max median z<1): none
+[02:05:30]   Total excluded: 590 (0.37%) [3s]
+[02:05:45]   Remaining: 159769 cells in 23 clusters
+[02:05:45] Saving figures ...
+[02:07:09] Loading /mnt/e/gastric-msda-upload/10_R_pipeline/02_Normalize_Batch/data ...
+[02:08:39]   160359 cells x 32738 genes [89s]
+[02:08:39] FindNeighbors (harmony, dims=1:50, k=15) + Leiden (r=0.5) ...
+[02:10:19]   23 clusters [100s]
+[02:10:19] RunUMAP (harmony) ...
+[02:12:32]   UMAP done [133s]
+[02:12:32] Computing 12-type marker scores (mean expression) ...
+[02:12:34]   T_cells         : 3/5 markers found (missing: TRAC,TRBC1)
+[02:12:36]   Plasma_cells    : 2/5 markers found (missing: JCHAIN,IGHG1,IGKC)
+[02:12:37]   Endothelial     : 7/8 markers found (missing: PECAM1)
+[02:12:39]   Scores done [6s]
+[02:12:39] Annotating: per-cell z-score -> cluster mode ...
+[02:12:43]   Cluster annotation (mode vote) + purity:
+[02:12:43]     Cls 1   -> Plasma_cells     purity 0.952
+[02:12:43]     Cls 10  -> Enteroendocrine  purity 0.527
+[02:12:43]     Cls 11  -> Plasma_cells     purity 0.948
+[02:12:43]     Cls 12  -> Fibroblasts      purity 0.857
+[02:12:43]     Cls 13  -> Fibroblasts      purity 0.900
+[02:12:43]     Cls 14  -> Endothelial      purity 0.776
+[02:12:43]     Cls 15  -> B_cells          purity 0.727
+[02:12:43]     Cls 16  -> Mast_cells       purity 0.985
+[02:12:43]     Cls 17  -> Plasma_cells     purity 0.927
+[02:12:43]     Cls 18  -> Parietal         purity 0.859
+[02:12:43]     Cls 19  -> Epithelial       purity 0.928
+[02:12:43]     Cls 2   -> Epithelial       purity 0.586
+[02:12:43]     Cls 20  -> T_cells          purity 0.624
+[02:12:43]     Cls 21  -> Plasma_cells     purity 0.448
+[02:12:43]     Cls 22  -> Plasma_cells     purity 0.880
+[02:12:43]     Cls 23  -> Plasma_cells     purity 0.890
+[02:12:43]     Cls 3   -> B_cells          purity 0.825
+[02:12:43]     Cls 4   -> T_cells          purity 0.900
+[02:12:43]     Cls 5   -> T_cells          purity 0.720
+[02:12:43]     Cls 6   -> Chief            purity 0.986
+[02:12:43]     Cls 7   -> Epithelial       purity 0.977
+[02:12:43]     Cls 8   -> Epithelial       purity 0.537
+[02:12:43]     Cls 9   -> Myeloid          purity 0.572
+[02:12:43]   Per-cell low-confidence (z-delta < 0.5): 13888 (8.7%) [5s]
+[02:12:46]   RBC candidates (globin frac > 0.05): 590 (0.37%)
+[02:12:46]   Dead-cell clusters (median MT%>25 & max median z<1): none
+[02:12:46]   Total excluded: 590 (0.37%) [3s]
+[02:13:01]   Remaining: 159769 cells in 23 clusters
+[02:13:01] Saving figures ...
+[02:13:06]   Figures done [4s]
+[02:13:06] Saving Seurat object (RDS) ...
+[02:13:17]   Saved [12s]
+[02:13:17] Copying to /mnt/e ...
+[02:14:10] 
+============================================================
+[02:14:10] Cluster + annotate complete.
+[02:14:10]   159769 cells, 23 clusters, 11 types, 8.7% low-confidence
+[02:14:10]   Type counts:
+[02:14:10]     B_cells          18893
+[02:14:10]     Chief            9865
+[02:14:10]     Endothelial      3917
+[02:14:10]     Enteroendocrine  4439
+[02:14:10]     Epithelial       35015
+[02:14:10]     Fibroblasts      8098
+[02:14:10]     Mast_cells       2595
+[02:14:10]     Myeloid          5367
+[02:14:10]     Parietal         981
+[02:14:10]     Plasma_cells     44397
+[02:14:10]     T_cells          26202
+[16:52:48] Loading /mnt/e/gastric-msda-upload/10_R_pipeline/02_Normalize_Batch/data ...
+[16:54:39]   159308 cells x 32738 genes [111s]
+[16:54:42]   RBC candidates (globin frac > 0.05): 583 (0.37%)
+[16:54:56]   Post-RBC: 158725 cells [17s]
+[16:54:56] FindNeighbors (harmony, dims=1:50, k=15) + Leiden (r=0.5) ...
+[16:56:37]   22 clusters [101s]
+[16:56:37] RunUMAP (harmony) ...
+[16:58:52]   UMAP done [135s]
+[16:58:52] Computing 12-type marker scores (score_genes protocol) ...
+[16:59:48]   Scores done [56s]
+[16:59:48] Annotating: per-cell z-score -> argmax vote ...
+[16:59:56]   CD3D rescue: 664/2129 NK votes -> T_cells (31.2%)
+[16:59:57]   Cluster annotation (mode vote, reference) + purity:
+[16:59:57]     Cls 1   -> Plasma_cells     purity 0.928
+[16:59:57]     Cls 10  -> Fibroblasts      purity 0.963
+[16:59:57]     Cls 11  -> Enteroendocrine  purity 0.653
+[16:59:57]     Cls 12  -> Plasma_cells     purity 0.926
+[16:59:57]     Cls 13  -> Endothelial      purity 0.888
+[16:59:57]     Cls 14  -> Fibroblasts      purity 0.954
+[16:59:57]     Cls 15  -> B_cells          purity 0.753
+[16:59:57]     Cls 16  -> Mast_cells       purity 0.995
+[16:59:57]     Cls 17  -> Parietal         purity 0.889
+[16:59:57]     Cls 18  -> Epithelial       purity 0.928
+[16:59:57]     Cls 19  -> Plasma_cells     purity 0.774
+[16:59:57]     Cls 2   -> Epithelial       purity 0.682
+[16:59:57]     Cls 20  -> Plasma_cells     purity 0.828
+[16:59:57]     Cls 21  -> Plasma_cells     purity 0.897
+[16:59:57]     Cls 22  -> Plasma_cells     purity 0.855
+[16:59:57]     Cls 3   -> B_cells          purity 0.897
+[16:59:57]     Cls 4   -> T_cells          purity 0.942
+[16:59:57]     Cls 5   -> T_cells          purity 0.885
+[16:59:57]     Cls 6   -> Epithelial       purity 0.962
+[16:59:57]     Cls 7   -> Chief            purity 0.984
+[16:59:57]     Cls 8   -> Epithelial       purity 0.403
+[16:59:57]     Cls 9   -> Myeloid          purity 0.714
+[16:59:57]   Per-cell low-confidence (z-delta < 0.5): 13067 (8.2%) [9s]
+[16:59:57]   Dead-cell clusters (median MT%>25 & max median z<1): none
+[16:59:57]   Total excluded: 0 (0.00%) [9s]
+[16:59:57]   Remaining: 158725 cells in 22 clusters
+[16:59:57] Saving figures ...
+[17:00:16]   Figures done [20s]
+[17:00:16] Saving Seurat object (RDS) ...
+[17:00:30]   Saved [14s]
+[17:00:30] Copying to /mnt/e ...
+[17:01:40] 
+============================================================
+[17:01:40] Cluster + annotate complete.
+[17:01:40]   158725 cells, 22 clusters, 12 types, 8.2% low-confidence
+[17:01:40]   Type counts (per-cell vote):
+[17:01:40]     B_cells          19125
+[17:01:40]     Chief            20604
+[17:01:40]     Endothelial      3652
+[17:01:40]     Enteroendocrine  3650
+[17:01:40]     Epithelial       27474
+[17:01:40]     Fibroblasts      8037
+[17:01:40]     Mast_cells       3044
+[17:01:40]     Myeloid          3920
+[17:01:40]     NK_cells         1465
+[17:01:40]     Parietal         1244
+[17:01:40]     Plasma_cells     41724
+[17:01:40]     T_cells          24786
+[07:15:47] Loading /mnt/e/gastric-msda-upload/10_R_pipeline/02_Normalize_Batch/data ...
+[07:17:40]   159308 cells x 32738 genes [113s]
+[07:17:43]   RBC candidates (globin frac > 0.05): 583 (0.37%)
+[07:17:57]   Post-RBC: 158725 cells [17s]
+[07:17:57] FindNeighbors (harmony, dims=1:50, k=15) + Leiden (r=0.5) ...
+[07:19:48]   21 clusters [111s]
+[07:19:48] RunUMAP (harmony) ...
+[07:22:07]   UMAP done [139s]
+[07:22:07] Computing 12-type marker scores (score_genes protocol) ...
+[07:23:08]   Scores done [61s]
+[07:23:08] Annotating: per-cell z-score -> argmax vote ...
+[07:23:20]   CD3D rescue: 691/2120 NK votes -> T_cells (32.6%)
+[07:23:20]   Cluster annotation (mode vote, reference) + purity:
+[07:23:20]     Cls 1   -> Plasma_cells     purity 0.903
+[07:23:20]     Cls 10  -> Fibroblasts      purity 0.961
+[07:23:20]     Cls 11  -> Enteroendocrine  purity 0.574
+[07:23:20]     Cls 12  -> Plasma_cells     purity 0.906
+[07:23:20]     Cls 13  -> Endothelial      purity 0.875
+[07:23:20]     Cls 14  -> Fibroblasts      purity 0.941
+[07:23:20]     Cls 15  -> B_cells          purity 0.743
+[07:23:20]     Cls 16  -> Mast_cells       purity 0.993
+[07:23:20]     Cls 17  -> Parietal         purity 0.929
+[07:23:20]     Cls 18  -> Plasma_cells     purity 0.715
+[07:23:20]     Cls 19  -> Epithelial       purity 0.942
+[07:23:20]     Cls 2   -> B_cells          purity 0.869
+[07:23:20]     Cls 20  -> Plasma_cells     purity 0.691
+[07:23:20]     Cls 21  -> Plasma_cells     purity 0.794
+[07:23:20]     Cls 3   -> Chief            purity 0.819
+[07:23:20]     Cls 4   -> T_cells          purity 0.942
+[07:23:20]     Cls 5   -> Epithelial       purity 0.864
+[07:23:20]     Cls 6   -> T_cells          purity 0.876
+[07:23:20]     Cls 7   -> Epithelial       purity 0.518
+[07:23:20]     Cls 8   -> Epithelial       purity 0.961
+[07:23:20]     Cls 9   -> Myeloid          purity 0.700
+[07:23:20]   Per-cell low-confidence (z-delta < 0.5): 16946 (10.7%) [12s]
+[07:23:21]   Dead-cell clusters (median MT%>25 & max median z<1): none
+[07:23:21]   Total excluded: 0 (0.00%) [12s]
+[07:23:21]   Remaining: 158725 cells in 21 clusters
+[07:23:21] Saving Seurat object (RDS) ...
+[07:23:37]   Saved [16s]
+[07:23:37] Copying to /mnt/e ...
+[07:25:08] 
+============================================================
+[07:25:08] Cluster + annotate complete.
+[07:25:08]   158725 cells, 21 clusters, 12 types, 10.7% low-confidence
+[07:25:09]   Type counts (per-cell vote):
+[07:25:09]     B_cells          18607
+[07:25:09]     Chief            20944
+[07:25:09]     Endothelial      3714
+[07:25:09]     Enteroendocrine  2968
+[07:25:09]     Epithelial       29213
+[07:25:09]     Fibroblasts      8014
+[07:25:09]     Mast_cells       3171
+[07:25:09]     Myeloid          3857
+[07:25:09]     NK_cells         1429
+[07:25:09]     Parietal         1513
+[07:25:09]     Plasma_cells     40535
+[07:25:09]     T_cells          24760
+[16:12:33] Loading 02_Normalize_Batch/data ...
+[16:14:29]   159308 cells x 32738 genes [117s]
+[16:14:32]   RBC candidates (globin frac > 0.05): 583 (0.37%)
+[16:14:47]   Post-RBC: 158725 cells [17s]
+[16:14:47] FindNeighbors (harmony, dims=1:50, k=15) + Leiden (r=0.5) ...
+[16:16:32]   21 clusters [106s]
+[16:16:32] RunUMAP (harmony) ...
+[16:18:46]   UMAP done [134s]
+[16:18:46] Computing 12-type marker scores (score_genes protocol) ...
+[16:19:47]   Scores done [61s]
+[16:19:47] Annotating: per-cell z-score -> argmax vote ...
+[16:19:58]   CD3D rescue: 691/2120 NK votes -> T_cells (32.6%)
+[16:19:58]   Cluster annotation (mode vote, reference) + purity:
+[16:19:58]     Cls 1   -> Plasma_cells     purity 0.903
+[16:19:58]     Cls 10  -> Fibroblasts      purity 0.961
+[16:19:58]     Cls 11  -> Enteroendocrine  purity 0.574
+[16:19:58]     Cls 12  -> Plasma_cells     purity 0.906
+[16:19:58]     Cls 13  -> Endothelial      purity 0.875
+[16:19:58]     Cls 14  -> Fibroblasts      purity 0.941
+[16:19:58]     Cls 15  -> B_cells          purity 0.743
+[16:19:58]     Cls 16  -> Mast_cells       purity 0.993
+[16:19:58]     Cls 17  -> Parietal         purity 0.929
+[16:19:58]     Cls 18  -> Plasma_cells     purity 0.715
+[16:19:58]     Cls 19  -> Epithelial       purity 0.942
+[16:19:58]     Cls 2   -> B_cells          purity 0.869
+[16:19:58]     Cls 20  -> Plasma_cells     purity 0.691
+[16:19:58]     Cls 21  -> Plasma_cells     purity 0.794
+[16:19:58]     Cls 3   -> Chief            purity 0.819
+[16:19:58]     Cls 4   -> T_cells          purity 0.942
+[16:19:58]     Cls 5   -> Epithelial       purity 0.864
+[16:19:58]     Cls 6   -> T_cells          purity 0.876
+[16:19:58]     Cls 7   -> Epithelial       purity 0.518
+[16:19:58]     Cls 8   -> Epithelial       purity 0.961
+[16:19:58]     Cls 9   -> Myeloid          purity 0.700
+[16:19:58]   Per-cell low-confidence (z-delta < 0.5): 16946 (10.7%) [11s]
+[16:19:58]   Dead-cell clusters (median MT%>25 & max median z<1.5): 7
+[16:19:58]     Cls 1   globin: med 0.0000 / p90 0.0010 / max 0.0498 / >2%: 49
+[16:19:58]     Cls 10  globin: med 0.0000 / p90 0.0000 / max 0.0406 / >2%: 3
+[16:19:58]     Cls 11  globin: med 0.0000 / p90 0.0006 / max 0.0363 / >2%: 1
+[16:19:58]     Cls 12  globin: med 0.0000 / p90 0.0006 / max 0.0053 / >2%: 0
+[16:19:58]     Cls 13  globin: med 0.0000 / p90 0.0004 / max 0.0324 / >2%: 5
+[16:19:58]     Cls 14  globin: med 0.0000 / p90 0.0014 / max 0.0401 / >2%: 11
+[16:19:58]     Cls 15  globin: med 0.0000 / p90 0.0005 / max 0.0067 / >2%: 0
+[16:19:58]     Cls 16  globin: med 0.0000 / p90 0.0005 / max 0.0140 / >2%: 0
+[16:19:58]     Cls 17  globin: med 0.0000 / p90 0.0003 / max 0.0043 / >2%: 0
+[16:19:58]     Cls 18  globin: med 0.0000 / p90 0.0006 / max 0.0082 / >2%: 0
+[16:19:58]     Cls 19  globin: med 0.0000 / p90 0.0006 / max 0.0036 / >2%: 0
+[16:19:58]     Cls 2   globin: med 0.0000 / p90 0.0008 / max 0.0476 / >2%: 23
+[16:19:58]     Cls 20  globin: med 0.0000 / p90 0.0008 / max 0.0053 / >2%: 0
+[16:19:58]     Cls 21  globin: med 0.0000 / p90 0.0007 / max 0.0033 / >2%: 0
+[16:19:58]     Cls 3   globin: med 0.0000 / p90 0.0004 / max 0.0416 / >2%: 16
+[16:19:58]     Cls 4   globin: med 0.0000 / p90 0.0008 / max 0.0481 / >2%: 13
+[16:19:58]     Cls 5   globin: med 0.0000 / p90 0.0004 / max 0.0493 / >2%: 11
+[16:19:58]     Cls 6   globin: med 0.0000 / p90 0.0007 / max 0.0488 / >2%: 18
+[16:19:58]     Cls 7   globin: med 0.0000 / p90 0.0007 / max 0.0470 / >2%: 3
+[16:19:58]     Cls 8   globin: med 0.0000 / p90 0.0006 / max 0.0431 / >2%: 8
+[16:19:58]     Cls 9   globin: med 0.0000 / p90 0.0039 / max 0.0493 / >2%: 26
+[16:19:58]   Total excluded: 8235 (5.19%) [11s]
+[16:20:11]   Remaining: 150490 cells in 20 clusters
+[16:20:11] Saving Seurat object (RDS) ...
+[16:22:08] Loading 02_Normalize_Batch/data ...
+[16:24:15]   159308 cells x 32738 genes [127s]
+[16:24:18]   RBC candidates (globin frac > 0.05): 583 (0.37%)
+[16:24:32]   Post-RBC: 158725 cells [17s]
+[16:24:32] FindNeighbors (harmony, dims=1:50, k=15) + Leiden (r=0.5) ...
+[16:26:13]   21 clusters [101s]
+[16:26:13] RunUMAP (harmony) ...
+[16:28:27]   UMAP done [134s]
+[16:28:27] Computing 12-type marker scores (score_genes protocol) ...
+[16:29:27]   Scores done [60s]
+[16:29:27] Annotating: per-cell z-score -> argmax vote ...
+[16:29:36]   CD3D rescue: 691/2120 NK votes -> T_cells (32.6%)
+[16:29:36]   Cluster annotation (mode vote, reference) + purity:
+[16:29:36]     Cls 1   -> Plasma_cells     purity 0.903
+[16:29:36]     Cls 10  -> Fibroblasts      purity 0.961
+[16:29:36]     Cls 11  -> Enteroendocrine  purity 0.574
+[16:29:36]     Cls 12  -> Plasma_cells     purity 0.906
+[16:29:36]     Cls 13  -> Endothelial      purity 0.875
+[16:29:36]     Cls 14  -> Fibroblasts      purity 0.941
+[16:29:36]     Cls 15  -> B_cells          purity 0.743
+[16:29:36]     Cls 16  -> Mast_cells       purity 0.993
+[16:29:36]     Cls 17  -> Parietal         purity 0.929
+[16:29:36]     Cls 18  -> Plasma_cells     purity 0.715
+[16:29:36]     Cls 19  -> Epithelial       purity 0.942
+[16:29:36]     Cls 2   -> B_cells          purity 0.869
+[16:29:36]     Cls 20  -> Plasma_cells     purity 0.691
+[16:29:36]     Cls 21  -> Plasma_cells     purity 0.794
+[16:29:36]     Cls 3   -> Chief            purity 0.819
+[16:29:36]     Cls 4   -> T_cells          purity 0.942
+[16:29:36]     Cls 5   -> Epithelial       purity 0.864
+[16:29:36]     Cls 6   -> T_cells          purity 0.876
+[16:29:36]     Cls 7   -> Epithelial       purity 0.518
+[16:29:36]     Cls 8   -> Epithelial       purity 0.961
+[16:29:36]     Cls 9   -> Myeloid          purity 0.700
+[16:29:36]   Per-cell low-confidence (z-delta < 0.5): 16946 (10.7%) [9s]
+[16:29:36]   Dead-cell clusters (median MT%>25 & max median z<1.5): 7
+[16:29:37]     Cls 1   globin: med 0.0000 / p90 0.0010 / max 0.0498 / >2%: 49
+[16:29:37]     Cls 10  globin: med 0.0000 / p90 0.0000 / max 0.0406 / >2%: 3
+[16:29:37]     Cls 11  globin: med 0.0000 / p90 0.0006 / max 0.0363 / >2%: 1
+[16:29:37]     Cls 12  globin: med 0.0000 / p90 0.0006 / max 0.0053 / >2%: 0
+[16:29:37]     Cls 13  globin: med 0.0000 / p90 0.0004 / max 0.0324 / >2%: 5
+[16:29:37]     Cls 14  globin: med 0.0000 / p90 0.0014 / max 0.0401 / >2%: 11
+[16:29:37]     Cls 15  globin: med 0.0000 / p90 0.0005 / max 0.0067 / >2%: 0
+[16:29:37]     Cls 16  globin: med 0.0000 / p90 0.0005 / max 0.0140 / >2%: 0
+[16:29:37]     Cls 17  globin: med 0.0000 / p90 0.0003 / max 0.0043 / >2%: 0
+[16:29:37]     Cls 18  globin: med 0.0000 / p90 0.0006 / max 0.0082 / >2%: 0
+[16:29:37]     Cls 19  globin: med 0.0000 / p90 0.0006 / max 0.0036 / >2%: 0
+[16:29:37]     Cls 2   globin: med 0.0000 / p90 0.0008 / max 0.0476 / >2%: 23
+[16:29:37]     Cls 20  globin: med 0.0000 / p90 0.0008 / max 0.0053 / >2%: 0
+[16:29:37]     Cls 21  globin: med 0.0000 / p90 0.0007 / max 0.0033 / >2%: 0
+[16:29:37]     Cls 3   globin: med 0.0000 / p90 0.0004 / max 0.0416 / >2%: 16
+[16:29:37]     Cls 4   globin: med 0.0000 / p90 0.0008 / max 0.0481 / >2%: 13
+[16:29:37]     Cls 5   globin: med 0.0000 / p90 0.0004 / max 0.0493 / >2%: 11
+[16:29:37]     Cls 6   globin: med 0.0000 / p90 0.0007 / max 0.0488 / >2%: 18
+[16:29:37]     Cls 7   globin: med 0.0000 / p90 0.0007 / max 0.0470 / >2%: 3
+[16:29:37]     Cls 8   globin: med 0.0000 / p90 0.0006 / max 0.0431 / >2%: 8
+[16:29:37]     Cls 9   globin: med 0.0000 / p90 0.0039 / max 0.0493 / >2%: 26
+[16:29:37]   Total excluded: 8235 (5.19%) [9s]
+[16:29:51]   Remaining: 150490 cells in 20 clusters
+[16:29:51] Saving Seurat object (RDS) ...
+[16:30:02]   Saved [11s]
+[16:30:02] Copying outputs to repo dir ...
+[16:31:29] 
+============================================================
+[16:31:29] Cluster + annotate complete.
+[16:31:29]   150490 cells, 20 clusters, 12 types, 10.6% low-confidence
+[16:31:29]   Type counts (per-cell vote):
+[16:31:29]     B_cells          17925
+[16:31:29]     Chief            19065
+[16:31:29]     Endothelial      3706
+[16:31:29]     Enteroendocrine  2933
+[16:31:29]     Epithelial       24946
+[16:31:29]     Fibroblasts      7999
+[16:31:29]     Mast_cells       3152
+[16:31:29]     Myeloid          3848
+[16:31:29]     NK_cells         1414
+[16:31:29]     Parietal         1455
+[16:31:29]     Plasma_cells     39326
+[16:31:29]     T_cells          24721

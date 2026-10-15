@@ -1,0 +1,39 @@
+{
+  "step": "02_Normalize_Batch",
+  "normalization": {
+    "method": "LogNormalize",
+    "scale_factor": 10000,
+    "scale_factor_type": "CP10K (Seurat default)"
+  },
+  "cell_cycle": {
+    "method": "Seurat CellCycleScoring",
+    "gene_set": "Tirosh 2015 cc.genes"
+  },
+  "hvg": {
+    "initial_n": 3000,
+    "final_n": 2000,
+    "selection": "vst",
+    "blacklist": ["^MT-", "^RPL", "^RPS", "^MRPL", "^MRPS", "^MALAT1$"],
+    "re_rank": "residual variance after regression"
+  },
+  "regression": {
+    "vars": ["S.Score", "G2M.Score", "percent.mt"],
+    "output": "centered residuals (not scaled)"
+  },
+  "scaling": {
+    "method": "z-score",
+    "clip": 10
+  },
+  "pca": {
+    "n_pcs": 50,
+    "features": 2000
+  },
+  "harmony": {
+    "theta": 2,
+    "sigma": 0.1,
+    "nclust": 100,
+    "max_iter": 20,
+    "early_stop": true
+  },
+  "paper_comparison": "Zhang 2021 regressed total UMI at scale step + tSNE; we use CC/MT regression + Harmony (era consensus)"
+}

@@ -1,0 +1,27 @@
+{
+  "n_cells": 150490,
+  "n_pcs_evaluated": 30,
+  "n_hvg": 2000,
+  "variance_pct_pc1": 4.1075,
+  "cum_var_pc30": 23.8797,
+  "max_eta2_patient_pc1_3": 0.2031,
+  "max_eta2_tissue_pc1_3": 0.0208,
+  "max_r2_cc_mt_pc1_10": 0.0183,
+  "thresholds": {
+    "eta2_batch_max": 0.15,
+    "r2_cc_mt_max": 0.05
+  },
+  "checks": {
+    "eta2_patient_ok": false,
+    "eta2_tissue_ok": true,
+    "r2_cc_mt_ok": true
+  },
+  "harmony": {
+    "mean_r2_sample_pc1_3_pre": 0.1014,
+    "mean_r2_sample_pc1_3_post": 0.0345,
+    "pc1_r2_pre": 0.1337,
+    "pc1_r2_post": 0.1189,
+    "fnn_k20_mixing_pre": 0.7172,
+    "fnn_k20_mixing_post": 0.9022
+  }
+}

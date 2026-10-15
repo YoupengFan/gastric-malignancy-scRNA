@@ -1,0 +1,4 @@
+iteration,n_malig_genes,n_nonmalig_genes,n_malignant,n_non_malignant,agreement,converged
+1,50,50,16433,27578,,FALSE
+2,50,50,12588,31423,0.85574061030197,FALSE
+3,50,50,12139,31872,0.95816954852196,TRUE

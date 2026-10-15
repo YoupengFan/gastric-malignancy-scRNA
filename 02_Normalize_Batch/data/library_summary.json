@@ -1,0 +1,15 @@
+{
+  "median_library": 2584,
+  "n_samples": 52,
+  "library_median_range": [1740.5, 3752],
+  "tissue_breakdown": {
+    "A": {
+      "n_samples": 29,
+      "mean_median_lib": 2764
+    },
+    "B": {
+      "n_samples": 23,
+      "mean_median_lib": 2379
+    }
+  }
+}

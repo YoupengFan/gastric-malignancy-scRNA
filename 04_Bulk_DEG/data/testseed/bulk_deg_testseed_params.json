@@ -1,0 +1,21 @@
+{
+  "step": "04_Bulk_DEG (sensitivity)",
+  "function_name": "step1_testseed_deg",
+  "role": "testseed — 早期误用数据源的种子，保留作稳健性/敏感性对照（历史见 04_Bulk_DEG/README.md）",
+  "method": "limma-voom: round(2^x-1) -> filter -> TMM -> voom -> eBayes(trend, robust), paired",
+  "data": "TCGA.STAD.sampleMap_HiSeqV2.gz (Xena sampleMap, log2(RSEM+1))",
+  "design": "~ patient + condition (paired), ref = Normal",
+  "thresholds": {
+    "n_top": 50,
+    "padj": 0.01
+  },
+  "filter": "pseudo_counts>1 in >=20% paired samples",
+  "output": {
+    "n_sig": 6125,
+    "n_up": 3231,
+    "n_down": 2894,
+    "n_patients": 32,
+    "n_genes_in": 20530,
+    "n_genes_filtered": 17900
+  }
+}
