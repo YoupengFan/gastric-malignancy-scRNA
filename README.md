@@ -85,6 +85,42 @@ Zhang 2021 的原始 scRNA-seq 数据存放于 **GSA-Human**（国家基因组�
 
 GSE150290 包含 **52 个 10x Genomics 样本**（GEO 页面概述为 "47 biopsies"，指 47 例癌症患者内镜活检：23 GC 肿瘤 + 24 癌旁正常；另有 5 例非癌对照 Pat25–Pat29，GEO 标记为 "Control"；合计 52）。全部为内镜活检（GEO: "biopsies"），来自 24 例胃癌患者（Pat01–Pat24，其中 Pat21 仅剩 A 样本，配对 B 未通过 QC 故实际肿瘤样本为 23 例）。每个样本提供标准的 10x 输出：barcodes、features、matrix。
 
+**患者临床注释**（Kim et al. 2022 Supplementary Table 1，已省略每样本细胞数两列）
+
+| 患者 | 性别 | 年龄 | 诊断 | Lauren | 萎缩 | 癌灶位置 | H. pylori | MSI | EBV |
+|---|---|---|---|---|---|---|---|---|---|
+| Patient01 | M | 75 | EGC | Intestinal | N | LB, AW | + | MSS |  |
+| Patient02 | M | 72 | AGC | Diffuse | N | LB, GC | + | MSS | − |
+| Patient03 | F | 66 | EGC | Diffuse | Y | Antrum, GC, PW | − | MSS |  |
+| Patient04 | F | 56 | EGC | Diffuse | Y | Antrum, PW | + | MSS |  |
+| Patient05 | M | 45 | EGC | Diffuse | N | MB, LC | + | MSS |  |
+| Patient06 | M | 58 | EGC | Diffuse | N | UB, PW | Equivocal | MSS |  |
+| Patient07 | M | 76 | EGC | Intestinal | Y | Angle, PW | + | MSS |  |
+| Patient08 | F | 56 | EGC | Diffuse | N | LB, LC | + | MSS |  |
+| Patient09 | M | 55 | EGC | Intestinal | Y | MB, LC | + | MSS |  |
+| Patient10 | M | 54 | EGC | Diffuse | N | LB, LC | + | MSS |  |
+| Patient11 | F | 55 | AGC | Diffuse | Y | MB, LC | + | MSS | − |
+| Patient12 | F | 62 | AGC | Diffuse | N | LB, LC | + | MSS | − |
+| Patient13 | M | 70 | EGC | Intestinal | N | Angle-Antrum, AW | + | MSS |  |
+| Patient14 | F | 45 | AGC | Diffuse | N | Antrum, PW | + | MSS | − |
+| Patient15 | M | 66 | AGC | Diffuse | N | MB, AW | − | MSS | − |
+| Patient16 | M | 57 | EGC | Diffuse | N | Angle, LC | Equivocal | MSS |  |
+| Patient17 | M | 51 | EGC | Intestinal | N | Antrum, AW | + | MSS |  |
+| Patient18 | M | 58 | EGC | Intestinal | N | Antrum, GC | + | MSS |  |
+| Patient19 | M | 80 | EGC | Intestinal | N | Angle, LC | + | MSS |  |
+| Patient20 | F | 41 | AGC | Diffuse | N | UB, LC | + | MSS |  |
+| Patient21 | M | 63 | AGC | Intestinal | Y | Antrum, LC | − | MSS |  |
+| Patient22 | M | 46 | EGC | Intestinal | Y | Antrum, PW | + | MSS |  |
+| Patient23 | M | 76 | AGC | Diffuse | Y | Angle, LC / Antrum, AW | + | MSS |  |
+| Patient24 | F | 44 | AGC | Diffuse | N | LB, GC | + | MSS | + |
+| Patient25 | F | 72 | CAG with IM | − | − |  | + | − | − |
+| Patient26 | F | 59 | CSG | − | − |  | + | − | − |
+| Patient27 | F | 61 | CSG | − | − |  | + | − | − |
+| Patient28 | F | 48 | CSG | − | − |  | + | − | − |
+| Patient29 | F | 43 | CAG with IM | − | − |  | + | − | − |
+
+*缩写：EGC 早期胃癌；AGC 进展期胃癌；CAG with IM 慢性萎缩性胃炎伴肠化生；CSG 慢性浅表性胃炎；Lauren Intestinal 肠型 / Diffuse 弥漫型；LB 下体 / AW 前壁 / GC 大弯 / PW 后壁 / MB 中体 / UB 上体 / LC 小弯 / Angle 胃角 / Antrum 胃窦；MSS 微卫星稳定（MSI 列 − 即无微卫星不稳定）；+ 阳性 / − 阴性 / Equivocal 不确定 / 空白 未检测。对照患者（Pat25–29）无癌灶位置。*
+
 
 > 📎 数据来源：[GSE150290 — NCBI GEO](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE150290)（Status: Public on Jan 30, 2022，无需注册即可访问元数据及下载 count matrix。）
 
