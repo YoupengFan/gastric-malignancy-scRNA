@@ -9,4 +9,4 @@
 | `GSE150290_genes_hg19.tsv` | 798K | ✅ | ENSEMBL→symbol 映射（32,738 行，取自 GSE150290 的 genes.tsv），04 双种子 DEG 的基因名映射 |
 | `raw/` | 1.3 GB（tar）/ 解压后 ~5.6G | ❌ | GEO [GSE150290](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE150290) 的 `GSE150290_RAW.tar`（52 样本，GSM4546300–GSM4546351，Kim et al. 2022 NPJ Precis Oncol），按 01_QC/README 约定的逐样本目录结构解压 |
 | `tcga_RSEM_gene_tpm.gz` | 707M | ❌ | UCSC Xena Toil hub：`https://toil-xena-hub.s3.us-east-1.amazonaws.com/download/tcga_RSEM_gene_tpm.gz`（04 主种子输入） |
-| `TCGA.STAD.sampleMap_HiSeqV2.gz` | 24M | ❌ | UCSC Xena：`https://tcga.xenahubs.net/download/TCGA.STAD.sampleMap%2FHiSeqV2.gz`（04 测试种子输入；旧 hub 直连地址已失效，2026-10-16 核验） |
+| `TCGA.STAD.sampleMap_HiSeqV2.gz` | 24M | ❌ | UCSC Xena：`https://tcga.xenahubs.net/download/TCGA.STAD.sampleMap%2FHiSeqV2.gz`（04 测试种子输入） |
