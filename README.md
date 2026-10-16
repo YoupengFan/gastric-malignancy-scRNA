@@ -3,12 +3,11 @@
 ## 目录
 
 1. [背景与结论速览](#1-背景与结论速览)
-2. [框架 · 我们的分析系统设计](#2-框架--我们的分析系统设计)
+2. [框架 · 我们的分析系统设计](#2-分析系统设计框架)
 3. [数据 · 为什么是 GSE150290 而不是 HRA000051](#3-数据--为什么是-gse150290-而不是-hra000051)
 4. [结果 — 跑道 A：从原始数据到上皮细胞](#4-结果--跑道-a从原始数据到上皮细胞)
 5. [结果 — 跑道 B：TCGA-STAD 种子基因集](#5-结果--跑道-btcga-stad-种子基因集)
 6. [结果 — 汇合：迭代恶性细胞分类](#6-结果--汇合迭代恶性细胞分类)
-7. [评价：一个"自洽但无锚"的算法](#7-评价一个自洽但无锚的算法)
 
 ---
 
@@ -22,7 +21,7 @@
 - **复现对象**：论文迭代 K-means 恶性细胞分类方法 = TCGA-STAD bulk DEG 种子基因 → AddModuleScore → K-means k=2 → pseudobulk DEG → 迭代至收敛 → 输出"恶性 / 非恶性"标签。
 - **数据**：论文原始数据 HRA000051 受控、不可获取（§3.1），改用公开数据 GSE150290（§3.2）——47 例癌症内镜活检 + 5 例非癌对照，共 52 个 10x 样本。
 - 我们交付两件事：① 一条可复现的 R 管线（§2–§6）；② 对该方法的一份评价（§7）。
-- **结论速览**：方法机械上自洽——所有配置与双种子下均稳定收敛（3–4 轮，一致性 91–96%）；但其输出的"恶性"标签没有生物学锚定，收敛轴是肠化生轴而非恶性轴，且迭代参照池被肿瘤细胞结构性污染。详见 §7。
+- **结论速览**：方法逻辑上自洽——所有配置与双种子下均稳定收敛（3–4 轮，一致性 91–96%）；但其输出的"恶性"标签没有生物学锚定，收敛轴推测是肠化生轴而非恶性轴，且迭代参照池被肿瘤细胞结构性污染。详见 §7。
 
 ---
 
@@ -80,49 +79,22 @@ Zhang 2021 的原始 scRNA-seq 数据存放于 **GSA-Human**（国家基因组�
 ### 3.2 GSE150290
 
 我们选择了 **Kim et al. (2022) *NPJ Precision Oncology*** 的公开数据集 **GSE150290**（韩国 National Cancer Center, PMID: 35087207）：
+> 📎 数据来源：[GSE150290 — NCBI GEO](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE150290)（Status: Public on Jan 30, 2022，无需注册即可访问元数据及下载 count matrix。）
 
-**原始数据结构**
+**原始数据结构：**
 
 GSE150290 包含 **52 个 10x Genomics 样本**（GEO 页面概述为 "47 biopsies"，指 47 例癌症患者内镜活检：23 GC 肿瘤 + 24 癌旁正常；另有 5 例非癌对照 Pat25–Pat29，GEO 标记为 "Control"；合计 52）。全部为内镜活检（GEO: "biopsies"），来自 24 例胃癌患者（Pat01–Pat24，其中 Pat21 仅剩 A 样本，配对 B 未通过 QC 故实际肿瘤样本为 23 例）。每个样本提供标准的 10x 输出：barcodes、features、matrix。
 
-**患者临床注释**（Kim et al. 2022 Supplementary Table 1，已省略每样本细胞数两列）
+**Clinical information————**[Kim et al. 2022 Supplementary Table 1,第18页](/00_Doc/GSE150290/41698_2022_251_MOESM1_ESM.pdf)
 
-| 患者 | 性别 | 年龄 | 诊断 | Lauren | 萎缩 | 癌灶位置 | H. pylori | MSI | EBV |
-|---|---|---|---|---|---|---|---|---|---|
-| Patient01 | M | 75 | EGC | Intestinal | N | LB, AW | + | MSS |  |
-| Patient02 | M | 72 | AGC | Diffuse | N | LB, GC | + | MSS | − |
-| Patient03 | F | 66 | EGC | Diffuse | Y | Antrum, GC, PW | − | MSS |  |
-| Patient04 | F | 56 | EGC | Diffuse | Y | Antrum, PW | + | MSS |  |
-| Patient05 | M | 45 | EGC | Diffuse | N | MB, LC | + | MSS |  |
-| Patient06 | M | 58 | EGC | Diffuse | N | UB, PW | Equivocal | MSS |  |
-| Patient07 | M | 76 | EGC | Intestinal | Y | Angle, PW | + | MSS |  |
-| Patient08 | F | 56 | EGC | Diffuse | N | LB, LC | + | MSS |  |
-| Patient09 | M | 55 | EGC | Intestinal | Y | MB, LC | + | MSS |  |
-| Patient10 | M | 54 | EGC | Diffuse | N | LB, LC | + | MSS |  |
-| Patient11 | F | 55 | AGC | Diffuse | Y | MB, LC | + | MSS | − |
-| Patient12 | F | 62 | AGC | Diffuse | N | LB, LC | + | MSS | − |
-| Patient13 | M | 70 | EGC | Intestinal | N | Angle-Antrum, AW | + | MSS |  |
-| Patient14 | F | 45 | AGC | Diffuse | N | Antrum, PW | + | MSS | − |
-| Patient15 | M | 66 | AGC | Diffuse | N | MB, AW | − | MSS | − |
-| Patient16 | M | 57 | EGC | Diffuse | N | Angle, LC | Equivocal | MSS |  |
-| Patient17 | M | 51 | EGC | Intestinal | N | Antrum, AW | + | MSS |  |
-| Patient18 | M | 58 | EGC | Intestinal | N | Antrum, GC | + | MSS |  |
-| Patient19 | M | 80 | EGC | Intestinal | N | Angle, LC | + | MSS |  |
-| Patient20 | F | 41 | AGC | Diffuse | N | UB, LC | + | MSS |  |
-| Patient21 | M | 63 | AGC | Intestinal | Y | Antrum, LC | − | MSS |  |
-| Patient22 | M | 46 | EGC | Intestinal | Y | Antrum, PW | + | MSS |  |
-| Patient23 | M | 76 | AGC | Diffuse | Y | Angle, LC / Antrum, AW | + | MSS |  |
-| Patient24 | F | 44 | AGC | Diffuse | N | LB, GC | + | MSS | + |
-| Patient25 | F | 72 | CAG with IM | − | − |  | + | − | − |
-| Patient26 | F | 59 | CSG | − | − |  | + | − | − |
-| Patient27 | F | 61 | CSG | − | − |  | + | − | − |
-| Patient28 | F | 48 | CSG | − | − |  | + | − | − |
-| Patient29 | F | 43 | CAG with IM | − | − |  | + | − | − |
+![](00_Doc/GSE150290/屏幕截图%202026-10-16%20050043.png)
+![](00_Doc/GSE150290/屏幕截图%202026-10-16%20050115.png)
 
-*缩写：EGC 早期胃癌；AGC 进展期胃癌；CAG with IM 慢性萎缩性胃炎伴肠化生；CSG 慢性浅表性胃炎；Lauren Intestinal 肠型 / Diffuse 弥漫型；LB 下体 / AW 前壁 / GC 大弯 / PW 后壁 / MB 中体 / UB 上体 / LC 小弯 / Angle 胃角 / Antrum 胃窦；MSS 微卫星稳定（MSI 列 − 即无微卫星不稳定）；+ 阳性 / − 阴性 / Equivocal 不确定 / 空白 未检测。对照患者（Pat25–29）无癌灶位置。*
+*EGC 早期胃癌；AGC 进展期胃癌；CAG with IM 慢性萎缩性胃炎伴肠化生；CSG 慢性浅表性胃炎；*  
+*Lauren： Intestinal 肠型 / Diffuse 弥漫型；*  
+*LB 下体 / AW 前壁 / GC 大弯 / PW 后壁 / MB 中体 / UB 上体 / LC 小弯 / Angle 胃角 / Antrum 胃窦；*  
+*MSS 微卫星稳定（MSI 列 − 即无微卫星不稳定）；+ 阳性 / − 阴性 / Equivocal 不确定 / 空白 未检测。对照患者（Pat25–29）无癌灶位置。*
 
-
-> 📎 数据来源：[GSE150290 — NCBI GEO](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE150290)（Status: Public on Jan 30, 2022，无需注册即可访问元数据及下载 count matrix。）
 
 选择 GSE150290 的优势是多重的：(1) 公开可获取，确保完全可复现；(2) 47 例癌症活检 vs 论文的 12 样本，统计功效显著增强；(3) 韩国独立队列为 Zhang 2021 方法提供了跨人群、跨机构的外部验证——这是原论文未曾进行的检验；
 
@@ -146,7 +118,7 @@ GSE150290 包含 **52 个 10x Genomics 样本**（GEO 页面概述为 "47 biopsi
 **(D)** 基因数量与 UMI 总计数之间的关系，随机抽取 50,000 个的barcode；图中颜色代表线粒体基因占比（MT%）。
 
 
-Data: GSE150290, 52 gastric cancer samples (10X Genomics). After filtering (1,001 ≤ UMI ≤ 15,000, genes ≥ 501, MT% ≤ 50%), **160,359 high-quality cells** retained; 1,051 heterotypic doublets removed by Scrublet → **159,308 cells** 进入下游。
+Data: After filtering (1,001 ≤ UMI ≤ 15,000, genes ≥ 501, MT% ≤ 50%), **160,359 high-quality cells** retained; 1,051 heterotypic doublets removed by Scrublet → **159,308 cells** 进入下游。
 
 ### 4.2 归一化(CP10K + log1p)
 
@@ -165,11 +137,8 @@ sigma=0.1, nclust=100）
 **Figure 3.1 Batch effect correction validation.** **(A)** 每细胞相邻细胞 k=20 是属于同样本的比例（post后降低），虚线为随机线**(B)** PC 1-30 样本相关性，矫正后降低
 
 ![UMAP before and after Harmony](02_Normalize_Batch/figures/umap_batch_before_after.png)
-**Figure 3.2 批次矫正 UMAP validation.** 抽取patient01、17、21 的 adjacent cancer侧 上皮类型细胞做示意图
+**Figure 3.2 批次矫正 UMAP validation.** 抽取patient 01、17、21 adjacent cancer 侧的上皮类型细胞做示意图
 
-
-
-Data: GSE150290, 52 gastric cancer samples (10X Genomics). 159,308 cells after QC filtering. Harmony: R package v2.0.5 (Korsunsky et al., 2019 *Nature Methods*).
 
 ### 4.4 聚类与细胞类型注释
 
@@ -178,11 +147,18 @@ Data: GSE150290, 52 gastric cancer samples (10X Genomics). 159,308 cells after Q
 
 我们采用 Kim 2022 + Zhang 2021 双来源 marker 的 12 类注释面板（Hybrid v2）——AddModuleScore（25 bins × 100 同 bin 对照扣除）打分后逐细胞 z-score，取 `argmax` 投票分配细胞类型（详见 [03_Cluster_Annotate/README.md](03_Cluster_Annotate/README.md)）。
 
+
+![](03_Cluster_Annotate/figures/qc_marker_dotplot.png)
+**Figure 4.1 Marker_dotplot.** 各个细胞类型的marker效果
+
+![](03_Cluster_Annotate/figures/qc_marker_violin.png)
+**Figure 4.2 Marker_violin.** 不同细胞类型的代表marker表达分布图
+
 ![Cell type annotation](03_Cluster_Annotate/figures/umap_annotation.png)
+**Figure 4.3 umap_annotation.** 12 种细胞类型在 UMAP 上效果
 
-
-
-*图 4.7: 细胞类型注释结果。12 种细胞类型在 UMAP 上呈清晰分区。*
+![](/03_Cluster_Annotate/figures/qc_confusion_heatmap.png)
+**Figure 4.4 heatmap.** 12 种细胞类型对应簇的纯度
 
 | 细胞类型 | 细胞数 | 比例 |
 |:---|:---:|:---:|
@@ -199,7 +175,9 @@ Data: GSE150290, 52 gastric cancer samples (10X Genomics). 159,308 cells after Q
 | Parietal cells | 1,455 | 1.0% |
 | NK cells | 1,414 | 0.9% |
 
-**44,011 个上皮谱系细胞**（Epithelial 24,946 + Chief 19,065）被提取，作为迭代分类的输入——约为原论文 10,411 个上皮细胞的 4.2 倍。低置信注释（z-delta < 0.5）共 15,940 细胞（10.6%），其中剔除后的运行见 §7.3。
+其中 chief 是消化酶工厂，解离时容易破裂。并且 marker PGC 表达量高 1-2 个数量级，基因泄漏拷贝数最多，最先穿透空液滴对照减法。这是 scRNA-seq 局部 ambient 的剂量效应，不是注释方法缺陷。更多污染解析在[NOTES_suspected_contamination.md](/03_Cluster_Annotate/scripts/contamination_analysis/NOTES_suspected_contamination.md).
+
+**44,011 个上皮谱系细胞**（Epithelial 24,946 + Chief 19,065）被提取，作为迭代分类的输入。低置信注释（z-delta < 0.5）共 15,940 细胞（10.6%），其中剔除后的运行见 §7.3。
 
 ---
 
@@ -212,6 +190,8 @@ Data: GSE150290, 52 gastric cancer samples (10X Genomics). 159,308 cells after Q
 另设一套**测试种子**（Xena HiSeqV2 + limma-voom，32 对配对）作结构敏感性对照（见 §7.3）。早期搭建期误将 HiSeqV2 矩阵当作论文数据源，对照 Table S1 与论文 method 后修正为主线 Toil；HiSeqV2 种子保留为测试种子而非丢弃。
 
 ![](04_Bulk_DEG/figures/fig_bulk_deg.png)
+**Figure 5 主种子数据集 DEG 火山图.** 无 FC 截断；|logFC|>1 仅作为火山图着色边界，不参与筛选，深色点即为选择的种子基因。
+
 **种子基因代表性成员**：
 
 | 方向 | 代表基因 | 功能 |
@@ -269,10 +249,6 @@ Data: GSE150290, 52 gastric cancer samples (10X Genomics). 159,308 cells after Q
 | 3 | 20,281 (46.1%) | 23,730 | 82.9% | ❌ |
 | 4 | **22,207 (50.5%)** | **21,804** | **91.0%** | ✅ |
 
-![Convergence trajectory](05_Iterative_Classify/figures/fig_convergence.png)
-
-*图 6.1: 收敛轨迹。标签一致性第 2–3 轮回落（85.2% → 82.9%），第 4 轮升至 91.0% 越过阈值收敛。最终 22,207 细胞被判"恶性"（50.5%）。*
-
 
 ### 6.3 最终 DEG 结果
 
@@ -285,75 +261,14 @@ Data: GSE150290, 52 gastric cancer samples (10X Genomics). 159,308 cells after Q
 
 恶性方向以胃表面/粘蛋白与肠化生程序为主（TFF1、GKN1、APOA1）；非恶性方向以胃消化酶为主（PGC、LIPF、LYZ），但**混有浆细胞/免疫相关基因（IGJ、IGLL5，深处还有 CD74、HLA-DRA、MZB1）**——最终签名并非纯上皮身份对比。
 
-### 6.4 K-means 切分图
+### 6.4 敏感性分析
 
-![K-means split](05_Iterative_Classify/figures/fig_scores_kmeans.png)
+为了评估输入的种子基因集和初始数据结构对迭代聚类最终分类效果的影响，我们使用了两套种子基因集（一套论文method指定的 Toil tcga_RSEM_gene_tpm 复现，一套测试种子 TCGA HiSeqV2 产出）。
 
-*图 6.2: 最终一轮 k=2 切分——模块分数空间（恶性评分 vs 非恶性评分），颜色为最终标签。*
 
----
+对主种子集（与论文 Table S1 逐位一致，94/100，末尾排名扰动），做6 run不同对照条件下分析；对测试种子集做 run 1、6 条件下分析（数据构成条件与论文一致），详细分析请看[05_Iterative_Classify/README.md](/05_Iterative_Classify/README.md)，或者详细结果数据集[per_patient_malignant.csv](/05_Iterative_Classify/data/per_patient_malignant.csv)。
 
-## 7. 评价：一个"自洽但无锚"的算法
 
-<!-- Claude 起草底稿（2026-10-15），待你手写定稿——请按 diff 审改 -->
-
-评价分三层：先承认方法与论文各自的价值（公正），再指出三重缺陷（核心），最后给出这件事作为"反面教材"的教学落点。
-
-### 7.1 先承认两件事
-
-**方法的机械价值**：k=2 强制二分 + 迭代 DEG，本质是一台"找数据中最大表达分歧轴"的自动化探针——实现简单、收敛快、无需先验。作为粗筛工具（"这张图谱里最大的转录分裂在哪"）它是合格的；我们六 Runs + 双种子全部稳定收敛（3-4 轮，agreement 91-96%）证明其机械稳定性。
-
-**论文的数据价值**：Zhang 2021 是首张胃早癌/癌前 scRNA 图谱，其 chief→SPEM 轨迹发现真实且重要；置于 2019-21 语境，单细胞方法本身即新颖性，发表在 Gut 有历史合理性。批判不针对数据与发现，针对方法与结论的对应关系。
-
-### 7.2 缺陷一：无生物学锚定——收敛到最大方差轴，而非恶性轴
-
-算法的"恶性"与"非恶性"只是 k=2 在模块分数空间画的一条线。迭代 DEG 是正反馈：每一轮的切点都在强化上一轮的对比，最终收敛到数据方差最大的轴。在我们的复现中，这个轴是肠化生轴（IM axis），不是恶性轴：
-
-- 六 Runs（上皮口径 / 基因选择 / 黑名单 / 低置信排除四种扰动）× 双种子（TCGA Toil 与 HiSeqV2 两套 bulk DEG），收敛主题**全部**是 IM 轴；
-- 非恶性方向签名跨种子高度一致（Jaccard 0.82-1.00）；
-- 测试种子第 1 轮签名即 4.7× 富集 IM 基因——种子自带 IM 偏倚，迭代不纠正反而放大。
-
-算法没有任何环节引入"恶性是什么"的生物学知识；种子基因集只是初值。**收敛方向由数据方差结构决定，与疾病无关。**
-
-### 7.3 缺陷二：切点无锚——输出是配置的函数，不是数据的属性
-
-因为切点没有生物学含义，任何配置扰动都会平移切点：
-
-| 扰动 | 恶性率 | 对照恶性率（Pat25-29） |
-|------|:---:|:---:|
-| 主种子 run1 | 50.5% | 30.6% |
-| 仅换种子（HiSeqV2 早期误用） | 31.6% | **6.6%（4.6× 漂移）** |
-| 仅加 12 基因管家黑名单 | 27.6% | **3.3%** |
-| 仅剔除 14.1% 低置信注释细胞 | 57.6% | 38.4% |
-
-对照组恶性率 3.3-41.6%：Pat25-29 是慢性胃炎患者（无癌），其细胞被判"恶性"的比例随配置任意漂移。低置信剔除实验中，测试种子下保留细胞 22.9% 跨越切点翻转标签（主种子仅 5.0%）——**切点附近的细胞成片翻转**，说明"恶性率"是种子与配置的函数，不是数据固有属性。
-
-### 7.4 缺陷三（核心）：参照自污——迭代参照无纯度约束，且零保险
-
-迭代 DEG 的"非恶性"参照并非固定：第 N 轮的参照 = 第 N−1 轮 k=2 画线剩下的池。算法从未使用临床标签，其"参照是正常细胞"的隐含前提没有任何机制保证。我们量化了主流程 run1 的两池构成：
-
-| 池 | 对照（无癌） | A 癌旁 | B 肿瘤组织 |
-|------|:---:|:---:|:---:|
-| **非恶性池**（21,804） | 34.5% | 44.5% | **20.9%** |
-| 恶性池（22,207） | **15.0%** | 44.9% | 40.2% |
-
-- 非恶性参照池中 **65.5% 的细胞来自癌症患者，20.9% 直接来自肿瘤组织**；四 Run（双种子 × 低置信排除）下该构成几乎不变（20.9-22.4%）——污染是结构性的，不是运气；
-- 反向同样失守：恶性池中 15.0% 来自无癌对照样本；
-- 算法唯一的"保险"是 90% agreement 收敛阈值，而收敛检查的是**切点是否停止移动，不是参照是否纯净**——我们 91.0% 收敛时参照已 1/5 是肿瘤细胞；
-- 论文自身提供了参照被污染的痕迹：其 no-malignant 群体呈 SPEM 演化方向——参照中混入了化生程序；
-- 全流程无任何正交真值（inferCNV / 突变 / 独立标记体系）校验两池身份；论文唯一的"验证"是标记物表达——而标记物就是签名基因本身（循环论证）。
-
-**参照冻结是本可选择的保险**：同一数据，我们的 MSDA 管线将参照模具从纯净对照一次性修剪后冻结、永不更新，迭代只发生在检测端。张 2021 选择了"让数据自己重定义对比"——迭代本身没错，**迭代而没有固定纯净支点**才是错。
-
-### 7.5 语义与验证：malignant 标签的偷换
-
-输出端还有一层独立的语义问题：算法输出的两群是"肠化生样 vs 胃分化样"（身份对比），论文将其表述为"malignant vs non-malignant"（疾病对比）。两个论据：① 收敛主题是 IM 轴；② 对照样本（无癌）30.6% 被判"恶性"，与"恶性=癌"的语义直接冲突。标签先行还导致 Fig 4A 的验证循环——用标签定义签名、再用签名解释标签。
-
-### 7.6 教训（这件事作为反面教材的题）
-
-1. **收敛 ≠ 正确**——agreement 是自指一致性（切点稳定），不是外部验证；
-2. **参照必须锚定**——迭代可以，支点不能动；参照的正当性不能交给算法自己输出；
-3. **语义与算法分离**——"最大的转录分歧" ≠ "恶性 vs 正常"，命名前先问轴是什么；
-4. **scRNA 层无法自我救赎**——CNV score 测的是表达偏离（身份信号 100× 淹没 CNV 的 2×），真值锚必须来自 DNA 级或正交先验。
+**Ctrl 恶性率非 0**（3.3–41.6%）：推测是因为对照组为慢性胃炎（Pat25-29），含少量 IM 细胞（慢性胃炎→肠化生是 Correa 级联的常见伴随病变），导致方法按身份轴将ctrl划为"恶性"——————（恶性=肠化生混淆）
 
 ---
