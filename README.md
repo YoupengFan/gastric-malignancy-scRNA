@@ -8,6 +8,7 @@
 4. [结果 — 跑道 A：从原始数据到上皮细胞](#4-结果--跑道-a从原始数据到上皮细胞)
 5. [结果 — 跑道 B：TCGA-STAD 种子基因集](#5-结果--跑道-btcga-stad-种子基因集)
 6. [结果 — 汇合：迭代恶性细胞分类](#6-结果--汇合迭代恶性细胞分类)
+7. [数据声明 — 仓库分发范围](#7-数据声明--仓库分发范围)
 
 ---
 
@@ -272,3 +273,20 @@ sigma=0.1, nclust=100）
 **Ctrl 恶性率非 0**（3.3–41.6%）：推测是因为对照组为慢性胃炎（Pat25-29），含少量 IM 细胞（慢性胃炎→肠化生是 Correa 级联的常见伴随病变），导致方法按身份轴将ctrl划为"恶性"——————（恶性=肠化生混淆）
 
 ---
+
+## 7. 数据声明 — 仓库分发范围
+
+本仓库随代码分发全部脚本、文档与轻量结果，**不随仓库分发**原始测序数据与可由管线重跑再生的巨型中间产物（仓库根目录 `.gitignore` 即本清单的机器可读版本）。
+
+**不随仓库分发的文件：**
+
+| 文件 | 位置 | 获取 / 生成方式 |
+|------|------|------|
+| GSE150290 原始 10x 数据（52 样本） | `01_Data/raw/` | [GEO 下载](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE150290)（Public，无需注册） |
+| TCGA-STAD Toil RSEM tpm（主种子数据源） | `01_Data/tcga_RSEM_gene_tpm.gz` | UCSC Xena Toil hub 下载（见 [04_Bulk_DEG/README.md](04_Bulk_DEG/README.md)） |
+| TCGA-STAD HiSeqV2（测试种子数据源） | `01_Data/TCGA.STAD.sampleMap_HiSeqV2.gz` | UCSC Xena 下载（同上） |
+| QC 后计数矩阵 | `01_QC/data/gse150290_qc_matrix.rds` | 由 [01_QC](01_QC/README.md) 脚本重跑生成 |
+| 归一化 + Harmony 对象 | `02_Normalize_Batch/data/gse150290_norm_harmony.rds` | 由 [02_Normalize_Batch](02_Normalize_Batch/README.md) 脚本重跑生成 |
+| 全量注释对象（约 6.2 GB） | `03_Cluster_Annotate/data/gse150290_annotated.rds` | 由 [03_Cluster_Annotate](03_Cluster_Annotate/README.md) 脚本重跑生成 |
+
+**随仓库分发**：上述清单之外的全部仓库文件——各目录 R 脚本、README、图件、轻量结果（CSV / JSON / 日志），参考文献全套（`00_Doc/`，含论文全文 PDF 与补充材料），Scrublet 评分 `01_QC/data/gse150290_doublet_scores.csv`（13 MB），以及 05 输入的上皮谱系计数子集 `03_Cluster_Annotate/data/gse150290_epi_counts.rds`（73 MB）。
