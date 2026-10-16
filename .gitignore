@@ -8,3 +8,6 @@
 01_QC/data/gse150290_qc_matrix.rds
 02_Normalize_Batch/data/gse150290_norm_harmony.rds
 03_Cluster_Annotate/data/gse150290_annotated.rds
+
+# 答复稿不进仓库（内容直接贴 issue，不作为仓库文件分发）
+anser.md
