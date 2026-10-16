@@ -283,8 +283,8 @@ sigma=0.1, nclust=100）
 | 文件 | 位置 | 获取 / 生成方式 |
 |------|------|------|
 | GSE150290 原始 10x 数据（52 样本） | `01_Data/raw/` | [GEO 下载](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE150290)（Public，无需注册） |
-| TCGA-STAD Toil RSEM tpm（主种子数据源） | `01_Data/tcga_RSEM_gene_tpm.gz` | UCSC Xena Toil hub 下载（见 [04_Bulk_DEG/README.md](04_Bulk_DEG/README.md)） |
-| TCGA-STAD HiSeqV2（测试种子数据源） | `01_Data/TCGA.STAD.sampleMap_HiSeqV2.gz` | UCSC Xena 下载（同上） |
+| TCGA-STAD Toil RSEM tpm（主种子数据源） | `01_Data/tcga_RSEM_gene_tpm.gz` | [UCSC Xena Toil hub](https://toil-xena-hub.s3.us-east-1.amazonaws.com/download/tcga_RSEM_gene_tpm.gz) |
+| TCGA-STAD HiSeqV2（测试种子数据源） | `01_Data/TCGA.STAD.sampleMap_HiSeqV2.gz` | [UCSC Xena](https://tcga.xenahubs.net/download/TCGA.STAD.sampleMap%2FHiSeqV2.gz) |
 | QC 后计数矩阵 | `01_QC/data/gse150290_qc_matrix.rds` | 由 [01_QC](01_QC/README.md) 脚本重跑生成 |
 | 归一化 + Harmony 对象 | `02_Normalize_Batch/data/gse150290_norm_harmony.rds` | 由 [02_Normalize_Batch](02_Normalize_Batch/README.md) 脚本重跑生成 |
 | 全量注释对象（约 6.2 GB） | `03_Cluster_Annotate/data/gse150290_annotated.rds` | 由 [03_Cluster_Annotate](03_Cluster_Annotate/README.md) 脚本重跑生成 |
