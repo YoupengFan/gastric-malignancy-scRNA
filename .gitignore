@@ -9,8 +9,8 @@
 02_Normalize_Batch/data/gse150290_norm_harmony.rds
 03_Cluster_Annotate/data/gse150290_annotated.rds
 
-# 答复稿不进仓库（内容直接贴 issue，不作为仓库文件分发）
+# 答复稿
 anser.md
 
-# 内部过程日志不上传（用户指定）
+# 内部过程日志不上传
 PROCESS_LOG.md
